@@ -7,7 +7,7 @@
 <link id="fav" rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%2290%22 font-size=%2290%22>⭐</text></svg>">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Bai Jamjuree:wght@400;600&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Bai+Jamjuree:wght@400;600&display=swap" rel="stylesheet">
 <style>
 :root{--gold:#ffd982;--ink:#f4eeff;--mute:#b9aedb;--night:#0b0e2b;--dusk:#2a1c55;--glow:#7a3a6b;--panel:#171446}
 *{box-sizing:border-box}
@@ -71,6 +71,10 @@ small{color:var(--mute)}
 </style>
 </head>
 <body>
+<header>
+  <h1>MSG</h1>
+  <p>เขียนคำอธิษฐาน แล้วปล่อยให้ดาวลอยขึ้นฟ้า แตะดาวสักดวง อาจได้อ่านคำอธิษฐานของคนอื่น หรือได้คำทำนายของคุณ</p>
+  <p id="count"></p>
 </header>
 <div id="sky"></div>
 <nav>
@@ -80,11 +84,21 @@ small{color:var(--mute)}
 <div id="toast" role="status" aria-live="polite"></div>
 
 <script>
+/* แสดงข้อความ error บนหน้าเว็บ ช่วยให้รู้ว่าแก้ผิดตรงไหน */
+addEventListener("error", e => {
+  const d = document.createElement("div");
+  d.style.cssText = "position:fixed;left:8px;right:8px;top:8px;z-index:99;background:#ffe3e3;color:#7a0000;padding:10px 14px;border-radius:10px;font:14px/1.5 system-ui,sans-serif";
+  d.textContent = "เกิดข้อผิดพลาด: " + e.message + (e.lineno ? " (บรรทัด " + e.lineno + ")" : "");
+  document.body.append(d);
+});
+</script>
+<script>
 /* ---------- ตั้งค่า ----------
    ถ้าอยากให้ทุกคนเห็นคำอธิษฐานของกันและกัน ให้ใส่ URL ของ Firebase Realtime Database
    เช่น "https://ชื่อโปรเจกต์-default-rtdb.asia-southeast1.firebasedatabase.app"
    (ไม่ต้องมี / ปิดท้าย) ถ้าเว้นว่าง จะเก็บไว้ในเบราว์เซอร์ของผู้ใช้เองเท่านั้น */
 const DB_URL = "https://msg-path-of-luminary-default-rtdb.asia-southeast1.firebasedatabase.app";
+const DB_BASE = DB_URL.trim().replace(/\/wishes\.json.*$/,"").replace(/\/+$/,"");
 
 /* ---------- ใส่รูปของคุณเอง ----------
    BACKGROUND_IMAGE : รูปพื้นหลัง เช่น "assets/bg.jpg" (เว้นว่าง "" = ใช้ท้องฟ้ายามค่ำคืนเดิม)
@@ -99,7 +113,7 @@ const USE_IMG = STAR_IMAGES.length > 0;
 /* FAVICON : ไอคอนบนแท็บเบราว์เซอร์ เช่น "assets/icon.png" (เว้นว่าง "" = ใช้รูปดาวเดิม)
    แนะนำ PNG สี่เหลี่ยมจัตุรัส 64x64 หรือ 128x128 px */
 const FAVICON = "Mahoushiki_Logo.png";
-if (FAVICON) document.getElementById("fav").href = FAVICON;
+try { if (FAVICON) document.getElementById("fav").href = FAVICON; } catch {}
 
 const COLORS = ["#ffd982","#ff9fb8","#9fd8ff","#b9a6ff","#a8f0c6","#ffb27a"];
 const COLOR_NAMES = ["ทอง","ชมพู","ฟ้า","ม่วง","เขียวมินต์","ส้ม"];
@@ -139,11 +153,14 @@ const lsSet = v => { try { localStorage.setItem("loydao", JSON.stringify(v)); } 
 const store = {
   async load(){
     let remote = [];
-    if (DB_URL) { try { const r = await fetch(`${DB_URL}/wishes.json?orderBy="$key"&limitToLast=150`); const o = await r.json(); remote = Object.values(o||{}); } catch {} }
+    if (DB_BASE) { try { const r = await fetch(`${DB_BASE}/wishes.json?orderBy="$key"&limitToLast=150`); const o = await r.json();
+      if (!r.ok || (o && o.error)) throw new Error((o && o.error) || r.status);
+      remote = Object.values(o||{}).filter(x=>x && typeof x==="object"); }
+      catch (err) { toast("เชื่อมต่อฐานข้อมูลไม่ได้: "+err.message); } }
     return [...remote, ...lsGet()];
   },
   async save(w){
-    if (DB_URL) { try { const r = await fetch(`${DB_URL}/wishes.json`,{method:"POST",body:JSON.stringify(w)}); if (r.ok) return; } catch {} }
+    if (DB_BASE) { try { const r = await fetch(`${DB_BASE}/wishes.json`,{method:"POST",body:JSON.stringify(w)}); if (r.ok) return; } catch {} }
     lsSet([...lsGet(), w].slice(-100));
   }
 };
@@ -216,8 +233,7 @@ function showFortune(it){
   show(body);
   setTimeout(()=>{
     body.replaceChildren(starEl("big",it.s,it.c), h("p",{class:"fh"},f.h), h("p",{class:"wish",style:"font-size:17px"},f.t),
-      h("div",{class:"facts"},h("span",{},"เลขนำโชค "+f.n),h("span",{},"สีมงคล "+f.c)),
-      //h("p",{class:"by"},"คำทำนายนี้เพื่อความบันเทิง"));
+      h("div",{class:"facts"},h("span",{},"เลขนำโชค "+f.n),h("span",{},"สีมงคล "+f.c)));
   }, reduce?0:1000);
 }
 const showItem = it => it.fortune ? showFortune(it) : showWish(it);
@@ -226,7 +242,7 @@ const showItem = it => it.fortune ? showFortune(it) : showWish(it);
 let pool = [...SEED];
 const active = new Set();
 const maxActive = () => innerWidth<600 ? 9 : 16;
-const updateCount = () => $("count").textContent = `คำอธิฐานทั้งหมดตอนนี้ ${pool.length} `;
+const updateCount = () => { const c=$("count"); if (c) c.textContent = `คำอธิษฐานทั้งหมดตอนนี้ ${pool.length} ดวง`; };
 
 function spawn(w, {mine=false, progress=0}={}){
   const size = mine ? 72 : 30+Math.random()*28;
@@ -271,7 +287,7 @@ $("bWrite").onclick=openWrite;
   const n = Math.min(maxActive()-3, 7);
   for (let i=0;i<n;i++) spawnRandom(.1+Math.random()*.7);
   setInterval(spawnRandom, 2300);
-  if (DB_URL) setInterval(async()=>{ const l=(await store.load()).map(clean).filter(w=>w.t); pool=[...SEED,...l]; updateCount(); }, 60000);
+  if (DB_BASE) setInterval(async()=>{ const l=(await store.load()).map(clean).filter(w=>w.t); pool=[...SEED,...l]; updateCount(); }, 60000);
 })();
 </script>
 </body>
