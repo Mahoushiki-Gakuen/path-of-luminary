@@ -72,9 +72,8 @@ small{color:var(--mute)}
 </head>
 <body>
 <header>
-  <h1>MSG</h1>
-  <p>เขียนคำอธิษฐาน แล้วปล่อยให้ดาวลอยขึ้นฟ้า แตะดาวสักดวง อาจได้อ่านคำอธิษฐานของคนอื่น หรือได้คำทำนายของคุณ</p>
   <p id="count"></p>
+</header>
 </header>
 <div id="sky"></div>
 <nav>
@@ -211,7 +210,7 @@ function openWrite(){
   const form = h("form",{onsubmit:async e=>{
       e.preventDefault(); const t=ta.value.trim(); if(!t) return;
       const w = clean({t,n:nm.value.trim(),s:shape,c:color,at:Date.now()});
-      await store.save(w); pool.push(w); updateCount(); dlg.close(); spawn(w,{mine:true}); toast("คำอธิษฐานของคุณลอยขึ้นฟ้าแล้ว");
+      await store.save(w); pool.push(w); updateCount(); dlg.close(); spawn(w,{mine:true}); toast("ดวงดาวได้ตอบรับคำอธิษฐานแล้ว");
     }},
     h("h2",{},"เขียนคำอธิษฐาน"), prev,
     h("label",{for:"ta"},"คำอธิษฐาน"), ta, h("div",{style:"text-align:right"},cnt),
