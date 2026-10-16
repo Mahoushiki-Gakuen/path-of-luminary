@@ -1,0 +1,279 @@
+<!doctype html>
+<html lang="th">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>ลอยดาว — เขียนคำอธิษฐานแล้วปล่อยขึ้นฟ้า</title>
+<link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%2290%22 font-size=%2290%22>⭐</text></svg>">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Mali:wght@400;600&display=swap" rel="stylesheet">
+<style>
+:root{--gold:#ffd982;--ink:#f4eeff;--mute:#b9aedb;--night:#0b0e2b;--dusk:#2a1c55;--glow:#7a3a6b;--panel:#171446}
+*{box-sizing:border-box}
+html,body{height:100%;margin:0}
+body{font-family:"Mali","Sarabun",system-ui,sans-serif;color:var(--ink);overflow:hidden;
+ background:linear-gradient(180deg,var(--night) 0%,var(--dusk) 62%,var(--glow) 100%);
+ padding-top:env(safe-area-inset-top)}
+button{font:inherit;color:inherit;cursor:pointer}
+:focus-visible{outline:3px solid var(--gold);outline-offset:3px}
+.dot{position:fixed;border-radius:50%;background:#fff;opacity:.6;animation:tw var(--d) ease-in-out infinite alternate;pointer-events:none}
+@keyframes tw{from{opacity:.15}to{opacity:.85}}
+header{position:fixed;top:0;left:0;right:0;padding:calc(18px + env(safe-area-inset-top)) 22px 0;z-index:5;pointer-events:none}
+h1{margin:0;font-size:clamp(28px,5vw,44px);font-weight:600;color:var(--gold);letter-spacing:.02em}
+header h1,header p{text-shadow:0 1px 8px rgba(5,5,24,.8)}
+header p{margin:4px 0 0;color:var(--mute);font-size:15px}
+#count{font-size:13px}
+.star{position:fixed;top:0;left:0;z-index:2;padding:0;border:0;background:none;
+ filter:drop-shadow(0 0 8px var(--gc,#ffd982));will-change:transform}
+.star svg,.star img{width:100%;height:100%;display:block}
+.star.mine{z-index:3;filter:drop-shadow(0 0 18px var(--gc,#ffd982))}
+.star:hover{filter:drop-shadow(0 0 16px #fff)}
+nav{position:fixed;left:0;right:0;bottom:0;z-index:5;display:flex;gap:10px;justify-content:center;flex-wrap:wrap;
+ padding:40px 14px calc(16px + env(safe-area-inset-bottom));background:linear-gradient(180deg,transparent,rgba(20,10,45,.85) 55%)}
+.btn{border:1.5px solid rgba(255,217,130,.55);background:rgba(23,20,70,.7);padding:11px 18px;border-radius:999px;font-size:16px}
+.btn:hover{background:rgba(60,45,120,.8)}
+.btn.primary{background:var(--gold);color:#2b1b3d;border-color:var(--gold);font-weight:600}
+.btn.primary:hover{background:#ffe7ac}
+dialog{background:var(--panel);color:var(--ink);border:1.5px solid rgba(255,217,130,.4);border-radius:20px;
+ width:min(94vw,460px);max-height:88vh;padding:22px;overflow:auto}
+dialog::backdrop{background:rgba(5,5,24,.72)}
+dialog h2{margin:0 0 12px;font-size:22px;color:var(--gold);font-weight:600}
+.x{position:absolute;top:10px;right:12px;border:0;background:none;font-size:26px;color:var(--mute);line-height:1}
+label,.lbl{display:block;margin:14px 0 6px;color:var(--mute);font-size:14px}
+textarea,input{width:100%;font:inherit;color:var(--ink);background:#0e0c33;border:1.5px solid #4a4390;border-radius:12px;padding:10px 12px}
+textarea{resize:vertical}
+small{color:var(--mute)}
+.row{display:flex;gap:8px;flex-wrap:wrap;align-items:center}
+.opt{width:48px;height:48px;padding:8px;border-radius:12px;border:1.5px solid #4a4390;background:#0e0c33}
+.opt[aria-pressed=true]{border-color:var(--gold);background:#2b2468}
+.sw{width:34px;height:34px;border-radius:50%;border:2px solid transparent;box-shadow:0 0 0 1.5px #4a4390}
+.sw[aria-pressed=true]{box-shadow:0 0 0 3px var(--gold)}
+.prev{width:84px;height:84px;margin:0 auto;filter:drop-shadow(0 0 14px var(--gc))}
+.prev svg,.big svg,.li svg,.prev img,.big img,.opt img{width:100%;height:100%;display:block;object-fit:contain}
+.big{width:96px;height:96px;margin:6px auto 12px;filter:drop-shadow(0 0 16px var(--gc))}
+.wish{font-size:20px;line-height:1.7;text-align:center;margin:0;overflow-wrap:anywhere}
+.by{text-align:center;color:var(--mute);margin-top:10px;font-size:14px}
+.go{width:100%;margin-top:18px}
+.list{display:grid;gap:8px;margin:0;padding:0;list-style:none}
+.li{display:flex;gap:12px;align-items:center;width:100%;text-align:left;padding:10px 12px;border-radius:14px;border:1px solid #3a3480;background:#0e0c33}
+.li:hover{border-color:var(--gold)}
+.li .ic{flex:0 0 30px;height:30px}
+.li span.t{overflow:hidden;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow-wrap:anywhere}
+.spin{animation:sp 1s ease-in-out}
+@keyframes sp{0%{transform:rotate(0) scale(.6)}60%{transform:rotate(540deg) scale(1.15)}100%{transform:rotate(720deg) scale(1)}}
+.fh{font-size:24px;text-align:center;margin:0 0 8px;color:var(--gold)}
+.facts{display:flex;justify-content:center;gap:18px;margin-top:14px;color:var(--mute);font-size:14px}
+#toast{position:fixed;left:50%;top:calc(20px + env(safe-area-inset-top));transform:translate(-50%,-90px);z-index:20;
+ background:var(--gold);color:#2b1b3d;padding:10px 18px;border-radius:999px;transition:transform .35s;max-width:90vw}
+#toast.on{transform:translate(-50%,0)}
+@media (prefers-reduced-motion:reduce){.dot,.spin{animation:none}}
+</style>
+</head>
+<body>
+<header>
+  <h1>ลอยดาว</h1>
+  <p>เขียนคำอธิษฐาน แล้วปล่อยให้ดาวลอยขึ้นฟ้า แตะดาวสักดวง อาจได้อ่านคำอธิษฐานของคนอื่น หรือได้คำทำนายของคุณ</p>
+  <p id="count"></p>
+</header>
+<div id="sky"></div>
+<nav>
+  <button class="btn primary" id="bWrite">เขียนคำอธิษฐาน</button>
+</nav>
+<dialog id="dlg"></dialog>
+<div id="toast" role="status" aria-live="polite"></div>
+
+<script>
+/* ---------- ตั้งค่า ----------
+   ถ้าอยากให้ทุกคนเห็นคำอธิษฐานของกันและกัน ให้ใส่ URL ของ Firebase Realtime Database
+   เช่น "https://ชื่อโปรเจกต์-default-rtdb.asia-southeast1.firebasedatabase.app"
+   (ไม่ต้องมี / ปิดท้าย) ถ้าเว้นว่าง จะเก็บไว้ในเบราว์เซอร์ของผู้ใช้เองเท่านั้น */
+const DB_URL = "https://msg-path-of-luminary-default-rtdb.asia-southeast1.firebasedatabase.app";
+
+/* ---------- ใส่รูปของคุณเอง ----------
+   BACKGROUND_IMAGE : รูปพื้นหลัง เช่น "assets/bg.jpg" (เว้นว่าง "" = ใช้ท้องฟ้ายามค่ำคืนเดิม)
+   STAR_IMAGES      : รูปแทนดวงดาว ใส่ได้หลายรูป เช่น ["assets/star1.png","assets/star2.png"]
+                      แนะนำ PNG/WebP พื้นหลังโปร่งใส ขนาดสี่เหลี่ยมจัตุรัส
+                      (เว้นว่าง [] = ใช้ดาวแบบวาดในโค้ดเดิม)
+   วางไฟล์ไว้ใน repo เดียวกับ index.html เช่นในโฟลเดอร์ assets/ */
+const BACKGROUND_IMAGE = "";
+const STAR_IMAGES = [];
+const USE_IMG = STAR_IMAGES.length > 0;
+
+const COLORS = ["#ffd982","#ff9fb8","#9fd8ff","#b9a6ff","#a8f0c6","#ffb27a"];
+const COLOR_NAMES = ["ทอง","ชมพู","ฟ้า","ม่วง","เขียวมินต์","ส้ม"];
+const poly = (n, r) => { const p=[]; for(let i=0;i<n*2;i++){const a=Math.PI*i/n-Math.PI/2,R=i%2?r*10:10;p.push((R*Math.cos(a)).toFixed(2)+","+(R*Math.sin(a)).toFixed(2))} return "M"+p.join("L")+"Z"; };
+const SHAPES = {
+  star5:{n:"ดาวห้าแฉก", d:poly(5,.42)},
+  sparkle:{n:"ประกายสี่แฉก", d:poly(4,.2)},
+  star6:{n:"ดาวหกแฉก", d:poly(6,.58)},
+  star8:{n:"ดาวแปดแฉก", d:poly(8,.62)},
+  heart:{n:"ดาวหัวใจ", d:"M0 9.5C-7-4-9-6-9-8.5-9-12 0-13 0-6 0-13 9-12 9-8.5 9-6 7-4 0 9.5Z", t:"translate(0,3) scale(.9)"}
+};
+const shapeKeys = () => USE_IMG ? STAR_IMAGES : Object.keys(SHAPES);
+const randShape = i => { const k = shapeKeys(); return k[(i ?? Math.floor(Math.random()*k.length)) % k.length]; };
+const SEED = [
+ ["ขอให้พ่อแม่สุขภาพแข็งแรงตลอดไป","น้ำ"],["ขอให้สอบผ่านนะ สู้ๆ","มายด์"],["อยากให้แมวที่บ้านอยู่กับเรานานๆ","ฝ้าย"],
+ ["ขอให้ปีหน้าได้เที่ยวทะเลบ่อยๆ","ปอ"],["ขอบคุณทุกคนที่อยู่ข้างกันมาตลอด","บีม"],["ขอให้งานที่ทำราบรื่น ไม่เหนื่อยเกินไป","พลอย"],
+ ["ขอให้ได้เจอคนที่เข้าใจกัน","ใบเตย"],["ขอให้ร้านเล็กๆ ของเราขายดี","ป้านก"],["อยากหายเหนื่อยสักที ขอพักใจหน่อยนะ",""],
+ ["ขอให้เพื่อนที่ไม่สบายหายไวๆ","ต้น"],["ขอให้ทุกคนที่อ่านอยู่ได้สิ่งที่ตั้งใจไว้","ดาวดวงแรก"],["ขอให้ฝนไม่ตกวันเที่ยวนะ","แพร"]
+].map((x,i)=>({t:x[0],n:x[1],s:randShape(i),c:COLORS[i%6],at:i,seed:1}));
+
+const FORTUNES = [
+ {h:"โชคดีกำลังเดินทางมา",t:"สิ่งที่เคยติดขัดจะเริ่มคลี่คลายในไม่ช้า ลองเปิดใจรับโอกาสเล็กๆ ที่เข้ามา",n:7,c:"ทอง"},
+ {h:"ความรักและมิตรภาพอบอุ่น",t:"มีคนคิดถึงคุณมากกว่าที่คิด ทักไปหาคนที่ห่างหายกันดูสักครั้ง",n:2,c:"ชมพู"},
+ {h:"การงานก้าวหน้า",t:"ความพยายามที่ผ่านมากำลังออกผล อดทนอีกนิดแล้วจะมีคนมองเห็น",n:9,c:"ฟ้า"},
+ {h:"ได้พักใจ",t:"ช่วงนี้ควรเดินช้าลงและดูแลตัวเอง เรื่องที่กังวลไม่ได้ใหญ่อย่างที่กลัว",n:5,c:"เขียวมินต์"},
+ {h:"โชคลาภเล็กๆ",t:"มีของดีหรือข่าวดีมาแบบไม่คาดคิด แต่อย่าลืมใช้จ่ายอย่างพอดี",n:3,c:"ส้ม"},
+ {h:"ปัญญาเปิดทาง",t:"ตัดสินใจเรื่องสำคัญได้ชัดขึ้น ถ้าสงสัยให้ถามผู้ใหญ่ที่ไว้ใจ",n:8,c:"ม่วง"},
+ {h:"เดินทางราบรื่น",t:"การไปไหนมาไหนเป็นมงคล ทริปที่วางแผนไว้จะสนุกกว่าที่คิด",n:6,c:"ฟ้า"},
+ {h:"สุขภาพดีขึ้น",t:"ร่างกายกำลังฟื้นตัว นอนให้พอและดื่มน้ำเยอะๆ จะยิ่งดี",n:1,c:"เขียวมินต์"},
+ {h:"เริ่มต้นใหม่ได้เสมอ",t:"เรื่องเก่าที่ค้างใจจะเบาลง ถึงเวลาเริ่มสิ่งที่เลื่อนมานาน",n:4,c:"ทอง"},
+ {h:"มีผู้อุปถัมภ์",t:"จะมีคนยื่นมือช่วยในจังหวะที่ต้องการ อย่าลืมขอบคุณและส่งต่อให้คนอื่น",n:0,c:"ชมพู"},
+ {h:"ความฝันใกล้เข้ามา",t:"เป้าหมายที่ตั้งไว้ยังอยู่ในเส้นทาง แค่ก้าวต่อไปทีละก้าว",n:8,c:"ม่วง"},
+ {h:"เงียบสงบแต่มั่นคง",t:"ไม่ต้องรีบแข่งกับใคร จังหวะของคุณกำลังพอดี",n:5,c:"ส้ม"}
+];
+
+/* ---------- เก็บข้อมูล ---------- */
+const lsGet = () => { try { return JSON.parse(localStorage.getItem("loydao")||"[]"); } catch { return []; } };
+const lsSet = v => { try { localStorage.setItem("loydao", JSON.stringify(v)); } catch {} };
+const store = {
+  async load(){
+    let remote = [];
+    if (DB_URL) { try { const r = await fetch(`${DB_URL}/wishes.json?orderBy="$key"&limitToLast=150`); const o = await r.json(); remote = Object.values(o||{}); } catch {} }
+    return [...remote, ...lsGet()];
+  },
+  async save(w){
+    if (DB_URL) { try { const r = await fetch(`${DB_URL}/wishes.json`,{method:"POST",body:JSON.stringify(w)}); if (r.ok) return; } catch {} }
+    lsSet([...lsGet(), w].slice(-100));
+  }
+};
+const clean = w => ({ t:String(w.t||"").slice(0,140), n:String(w.n||"").slice(0,20),
+  s:(USE_IMG?STAR_IMAGES.includes(w.s):SHAPES[w.s])?w.s:randShape(), c:COLORS.includes(w.c)?w.c:COLORS[0], at:+w.at||0 });
+
+/* ---------- ตัวช่วย ---------- */
+const $ = id => document.getElementById(id);
+const h = (tag, a={}, ...kids) => { const e=document.createElement(tag);
+  for (const k in a) k.startsWith("on") ? e[k]=a[k] : k==="class" ? e.className=a[k] : e.setAttribute(k,a[k]);
+  e.append(...kids); return e; };
+const starSVG = (s,c) => {
+  if (USE_IMG) { const src = STAR_IMAGES.includes(s) ? s : STAR_IMAGES[0]; return `<img src="${src.replace(/"/g,"%22")}" alt="" draggable="false">`; }
+  const sh=SHAPES[s]||SHAPES.star5;
+  return `<svg viewBox="-12 -12 24 24" aria-hidden="true"><path d="${sh.d}" ${sh.t?`transform="${sh.t}"`:""} fill="${c}" stroke="${c}" stroke-width="1.4" stroke-linejoin="round"/></svg>`; };
+const starEl = (cls,s,c) => { const e=h("div",{class:cls}); e.style.setProperty("--gc",c); e.innerHTML=starSVG(s,c); return e; };
+const reduce = matchMedia("(prefers-reduced-motion: reduce)").matches;
+let toastT; const toast = m => { const t=$("toast"); t.textContent=m; t.classList.add("on"); clearTimeout(toastT); toastT=setTimeout(()=>t.classList.remove("on"),3200); };
+
+/* ---------- กล่องข้อความ ---------- */
+const dlg = $("dlg");
+dlg.addEventListener("click", e => { if (e.target===dlg) dlg.close(); });
+const show = (...nodes) => { dlg.replaceChildren(h("button",{class:"x","aria-label":"ปิด",onclick:()=>dlg.close()},"×"),...nodes); if(!dlg.open) dlg.showModal(); };
+
+function showWish(w){
+  show(starEl("big",w.s,w.c), h("p",{class:"wish"},w.t), h("p",{class:"by"}, w.n ? "จาก "+w.n : "จากผู้ไม่ประสงค์ออกนาม"));
+}
+
+function openWrite(){
+  let shape=shapeKeys()[0], color=COLORS[0];
+  const prev = h("div",{class:"prev"});
+  const ta = h("textarea",{id:"ta",maxlength:"140",rows:"4",required:"",placeholder:"เช่น ขอให้ปีหน้าได้พักผ่อนเยอะๆ"});
+  const cnt = h("small",{},"0/140");
+  const nm = h("input",{id:"nm",maxlength:"20",placeholder:"ไม่ใส่ก็ได้"});
+  const shapeRow = h("div",{class:"row",role:"group","aria-label":"รูปดาว"});
+  const colorRow = h("div",{class:"row",role:"group","aria-label":"สีของดาว"});
+  const paint = () => {
+    prev.style.setProperty("--gc",color); prev.innerHTML=starSVG(shape,color);
+    [...shapeRow.children].forEach(b=>{ b.setAttribute("aria-pressed",b.dataset.k===shape); b.innerHTML=starSVG(b.dataset.k,color); });
+    [...colorRow.children].forEach(b=>b.setAttribute("aria-pressed",b.dataset.k===color));
+  };
+  shapeKeys().forEach((k,i)=>{ const nmS = SHAPES[k] ? SHAPES[k].n : "ดาวแบบที่ "+(i+1);
+    shapeRow.append(h("button",{type:"button",class:"opt","data-k":k,title:nmS,"aria-label":nmS,onclick:()=>{shape=k;paint();}})); });
+  COLORS.forEach((c,i)=>{ const b=h("button",{type:"button",class:"sw","data-k":c,title:COLOR_NAMES[i],"aria-label":COLOR_NAMES[i],onclick:()=>{color=c;paint();}}); b.style.background=c; colorRow.append(b); });
+  const colorWrap = h("div",{},h("div",{class:"lbl"},"เลือกสี"),colorRow);
+  if (USE_IMG) colorWrap.hidden = true;
+  ta.oninput = () => cnt.textContent = ta.value.length+"/140";
+  const form = h("form",{onsubmit:async e=>{
+      e.preventDefault(); const t=ta.value.trim(); if(!t) return;
+      const w = clean({t,n:nm.value.trim(),s:shape,c:color,at:Date.now()});
+      await store.save(w); pool.push(w); updateCount(); dlg.close(); spawn(w,{mine:true}); toast("คำอธิษฐานของคุณลอยขึ้นฟ้าแล้ว");
+    }},
+    h("h2",{},"เขียนคำอธิษฐาน"), prev,
+    h("label",{for:"ta"},"คำอธิษฐาน"), ta, h("div",{style:"text-align:right"},cnt),
+    h("label",{for:"nm"},"ชื่อเล่น"), nm,
+    h("div",{class:"lbl"},"เลือกรูปดาว"), shapeRow,
+    colorWrap,
+    h("button",{class:"btn primary go",type:"submit"},"ปล่อยดาวขึ้นฟ้า"));
+  paint(); show(form); ta.focus();
+}
+
+const FORTUNE_RATE = .3;
+const makeFortune = () => ({ fortune:FORTUNES[Math.floor(Math.random()*FORTUNES.length)],
+  s:randShape(), c:COLORS[Math.floor(Math.random()*COLORS.length)] });
+const pickItem = (free=pool) => (Math.random()<FORTUNE_RATE || !free.length) ? makeFortune() : free[Math.floor(Math.random()*free.length)];
+
+function showFortune(it){
+  const f=it.fortune, body=h("div");
+  body.replaceChildren(starEl("big"+(reduce?"":" spin"),it.s,it.c));
+  show(body);
+  setTimeout(()=>{
+    body.replaceChildren(starEl("big",it.s,it.c), h("p",{class:"fh"},f.h), h("p",{class:"wish",style:"font-size:17px"},f.t),
+      h("div",{class:"facts"},h("span",{},"เลขนำโชค "+f.n),h("span",{},"สีมงคล "+f.c)),
+      h("p",{class:"by"},"คำทำนายนี้เพื่อความบันเทิง"));
+  }, reduce?0:1000);
+}
+const showItem = it => it.fortune ? showFortune(it) : showWish(it);
+
+/* ---------- ท้องฟ้า ---------- */
+let pool = [...SEED];
+const active = new Set();
+const maxActive = () => innerWidth<600 ? 9 : 16;
+const updateCount = () => $("count").textContent = `ตอนนี้มีคำอธิษฐาน ${pool.length} ดวงบนฟ้า`;
+
+function spawn(w, {mine=false, progress=0}={}){
+  const size = mine ? 72 : 30+Math.random()*28;
+  const el = h("button",{class:"star"+(mine?" mine":""),"aria-label":"เปิดอ่านคำอธิษฐาน"});
+  el.style.width=el.style.height=size+"px"; el.style.setProperty("--gc",w.c); el.innerHTML=starSVG(w.s,w.c);
+  $("sky").append(el); active.add(w);
+  const W=innerWidth, H=innerHeight, dur=(mine?42000:28000+Math.random()*30000)*(reduce?2:1);
+  const x0=Math.random()*Math.max(1,W-size);
+  const offs=[0,.06,.3,.55,.8,.93,1];
+  const frames=offs.map((o,i)=>({
+    offset:o,
+    opacity:(i===0||i===offs.length-1)?0:1,
+    transform:`translate(${Math.min(W-size,Math.max(0,x0+(i&&i<offs.length-1?(Math.random()-.5)*180:0)))}px,${H-(o*(H+size+40))}px) rotate(${(Math.random()-.5)*40}deg)`
+  }));
+  const a = el.animate(frames,{duration:dur,easing:"linear",fill:"forwards"});
+  a.currentTime = progress*dur;
+  a.onfinish = () => { el.remove(); active.delete(w); };
+  el.onpointerenter = () => a.pause();
+  el.onpointerleave = () => a.play();
+  el.onclick = () => showItem(w);
+}
+
+function spawnRandom(progress=0){
+  if (active.size>=maxActive()) return;
+  const free = pool.filter(w=>!active.has(w));
+  spawn(pickItem(free),{progress});
+}
+
+if (BACKGROUND_IMAGE) document.body.style.background =
+  `linear-gradient(rgba(11,14,43,.25),rgba(42,28,85,.35)), url("${encodeURI(BACKGROUND_IMAGE).replace(/"/g,"%22")}") center/cover fixed no-repeat`;
+for (let i=0;i<70;i++){
+  const d=h("div",{class:"dot"}), s=Math.random()*2.2+.8;
+  d.style.cssText=`left:${Math.random()*100}%;top:${Math.random()*80}%;width:${s}px;height:${s}px;--d:${2+Math.random()*4}s`;
+  document.body.prepend(d);
+}
+
+$("bWrite").onclick=openWrite;
+
+(async () => {
+  const loaded = (await store.load()).map(clean).filter(w=>w.t);
+  pool = [...SEED, ...loaded]; updateCount();
+  const n = Math.min(maxActive()-3, 7);
+  for (let i=0;i<n;i++) spawnRandom(.1+Math.random()*.7);
+  setInterval(spawnRandom, 2300);
+  if (DB_URL) setInterval(async()=>{ const l=(await store.load()).map(clean).filter(w=>w.t); pool=[...SEED,...l]; updateCount(); }, 60000);
+})();
+</script>
+</body>
+</html>
