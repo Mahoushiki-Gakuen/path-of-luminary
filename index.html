@@ -4,15 +4,15 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <title>MSG — น่านฟ้าทะเลดาว</title>
-<link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%2290%22 font-size=%2290%22>⭐</text></svg>">
+<link id="fav" rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%2290%22 font-size=%2290%22>⭐</text></svg>">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Mali:wght@400;600&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Bai Jamjuree:wght@400;600&display=swap" rel="stylesheet">
 <style>
 :root{--gold:#ffd982;--ink:#f4eeff;--mute:#b9aedb;--night:#0b0e2b;--dusk:#2a1c55;--glow:#7a3a6b;--panel:#171446}
 *{box-sizing:border-box}
 html,body{height:100%;margin:0}
-body{font-family:"Mali","Sarabun",system-ui,sans-serif;color:var(--ink);overflow:hidden;
+body{font-family:"Bai Jamjuree","Sarabun",system-ui,sans-serif;color:var(--ink);overflow:hidden;
  background:linear-gradient(180deg,var(--night) 0%,var(--dusk) 62%,var(--glow) 100%);
  padding-top:env(safe-area-inset-top)}
 button{font:inherit;color:inherit;cursor:pointer}
@@ -71,10 +71,6 @@ small{color:var(--mute)}
 </style>
 </head>
 <body>
-<header>
-  <h1>ลอยดาว</h1>
-  <p>เขียนคำอธิษฐาน แล้วปล่อยให้ดาวลอยขึ้นฟ้า แตะดาวสักดวง อาจได้อ่านคำอธิษฐานของคนอื่น หรือได้คำทำนายของคุณ</p>
-  <p id="count"></p>
 </header>
 <div id="sky"></div>
 <nav>
@@ -100,6 +96,11 @@ const BACKGROUND_IMAGE = "";
 const STAR_IMAGES = [];
 const USE_IMG = STAR_IMAGES.length > 0;
 
+/* FAVICON : ไอคอนบนแท็บเบราว์เซอร์ เช่น "assets/icon.png" (เว้นว่าง "" = ใช้รูปดาวเดิม)
+   แนะนำ PNG สี่เหลี่ยมจัตุรัส 64x64 หรือ 128x128 px */
+const FAVICON = "Mahoushiki_Logo.png";
+if (FAVICON) document.getElementById("fav").href = FAVICON;
+
 const COLORS = ["#ffd982","#ff9fb8","#9fd8ff","#b9a6ff","#a8f0c6","#ffb27a"];
 const COLOR_NAMES = ["ทอง","ชมพู","ฟ้า","ม่วง","เขียวมินต์","ส้ม"];
 const poly = (n, r) => { const p=[]; for(let i=0;i<n*2;i++){const a=Math.PI*i/n-Math.PI/2,R=i%2?r*10:10;p.push((R*Math.cos(a)).toFixed(2)+","+(R*Math.sin(a)).toFixed(2))} return "M"+p.join("L")+"Z"; };
@@ -113,10 +114,8 @@ const SHAPES = {
 const shapeKeys = () => USE_IMG ? STAR_IMAGES : Object.keys(SHAPES);
 const randShape = i => { const k = shapeKeys(); return k[(i ?? Math.floor(Math.random()*k.length)) % k.length]; };
 const SEED = [
- ["ขอให้พ่อแม่สุขภาพแข็งแรงตลอดไป","น้ำ"],["ขอให้สอบผ่านนะ สู้ๆ","มายด์"],["อยากให้แมวที่บ้านอยู่กับเรานานๆ","ฝ้าย"],
- ["ขอให้ปีหน้าได้เที่ยวทะเลบ่อยๆ","ปอ"],["ขอบคุณทุกคนที่อยู่ข้างกันมาตลอด","บีม"],["ขอให้งานที่ทำราบรื่น ไม่เหนื่อยเกินไป","พลอย"],
- ["ขอให้ได้เจอคนที่เข้าใจกัน","ใบเตย"],["ขอให้ร้านเล็กๆ ของเราขายดี","ป้านก"],["อยากหายเหนื่อยสักที ขอพักใจหน่อยนะ",""],
- ["ขอให้เพื่อนที่ไม่สบายหายไวๆ","ต้น"],["ขอให้ทุกคนที่อ่านอยู่ได้สิ่งที่ตั้งใจไว้","ดาวดวงแรก"],["ขอให้ฝนไม่ตกวันเที่ยวนะ","แพร"]
+ ["ขอให้พ่อแม่สุขภาพแข็งแรงตลอดไป","A"],["ขอให้สอบผ่านนะ สู้ๆ","B"],["อยากให้แมวที่บ้านอยู่กับเรานานๆ","C"],
+ ["ขอให้ปีหน้าได้เที่ยวทะเลบ่อยๆ","D"],["ขอบคุณทุกคนที่อยู่ข้างกันมาตลอด","E"]
 ].map((x,i)=>({t:x[0],n:x[1],s:randShape(i),c:COLORS[i%6],at:i,seed:1}));
 
 const FORTUNES = [
@@ -178,7 +177,7 @@ function openWrite(){
   const prev = h("div",{class:"prev"});
   const ta = h("textarea",{id:"ta",maxlength:"140",rows:"4",required:"",placeholder:"เช่น ขอให้ปีหน้าได้พักผ่อนเยอะๆ"});
   const cnt = h("small",{},"0/140");
-  const nm = h("input",{id:"nm",maxlength:"20",placeholder:"ไม่ใส่ก็ได้"});
+  const nm = h("input",{id:"nm",maxlength:"20",placeholder:"สามารถเว้นว่างได้"});
   const shapeRow = h("div",{class:"row",role:"group","aria-label":"รูปดาว"});
   const colorRow = h("div",{class:"row",role:"group","aria-label":"สีของดาว"});
   const paint = () => {
@@ -218,7 +217,7 @@ function showFortune(it){
   setTimeout(()=>{
     body.replaceChildren(starEl("big",it.s,it.c), h("p",{class:"fh"},f.h), h("p",{class:"wish",style:"font-size:17px"},f.t),
       h("div",{class:"facts"},h("span",{},"เลขนำโชค "+f.n),h("span",{},"สีมงคล "+f.c)),
-      h("p",{class:"by"},"คำทำนายนี้เพื่อความบันเทิง"));
+      //h("p",{class:"by"},"คำทำนายนี้เพื่อความบันเทิง"));
   }, reduce?0:1000);
 }
 const showItem = it => it.fortune ? showFortune(it) : showWish(it);
@@ -227,7 +226,7 @@ const showItem = it => it.fortune ? showFortune(it) : showWish(it);
 let pool = [...SEED];
 const active = new Set();
 const maxActive = () => innerWidth<600 ? 9 : 16;
-const updateCount = () => $("count").textContent = `ตอนนี้มีคำอธิษฐาน ${pool.length} ดวงบนฟ้า`;
+const updateCount = () => $("count").textContent = `คำอธิฐานทั้งหมดตอนนี้ ${pool.length} `;
 
 function spawn(w, {mine=false, progress=0}={}){
   const size = mine ? 72 : 30+Math.random()*28;
