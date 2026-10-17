@@ -30,7 +30,7 @@ header p{margin:4px 0 0;color:var(--mute);font-size:15px}
 .star.mine{z-index:3;filter:drop-shadow(0 0 18px var(--gc,#ffd982))}
 .star:hover{filter:drop-shadow(0 0 16px #fff)}
 nav{position:fixed;left:0;right:0;bottom:0;z-index:5;display:flex;gap:10px;justify-content:center;flex-wrap:wrap;
- padding:40px 14px calc(45px + env(safe-area-inset-bottom));background:linear-gradient(180deg,transparent,rgba(20,10,45,.85) 55%)}
+ padding:40px 14px calc(67px + env(safe-area-inset-bottom));background:linear-gradient(180deg,transparent,rgba(20,10,45,.85) 55%)}
 .btn{border:1.5px solid rgba(255,217,130,.55);background:rgba(23,20,70,.7);padding:11px 18px;border-radius:999px;font-size:16px}
 .btn:hover{background:rgba(60,45,120,.8)}
 .btn.primary{background:var(--gold);color:#2b1b3d;border-color:var(--gold);font-weight:600}
@@ -83,7 +83,7 @@ small{color:var(--mute)}
 <div id="toast" role="status" aria-live="polite"></div>
 
 <script>
-/* แสดงข้อความ error บนหน้าเว็บ ช่วยให้รู้ว่าแก้ผิดตรงไหน */
+/* error */
 addEventListener("error", e => {
   const d = document.createElement("div");
   d.style.cssText = "position:fixed;left:8px;right:8px;top:8px;z-index:99;background:#ffe3e3;color:#7a0000;padding:10px 14px;border-radius:10px;font:14px/1.5 system-ui,sans-serif";
@@ -92,25 +92,15 @@ addEventListener("error", e => {
 });
 </script>
 <script>
-/* ---------- ตั้งค่า ----------
-   ถ้าอยากให้ทุกคนเห็นคำอธิษฐานของกันและกัน ให้ใส่ URL ของ Firebase Realtime Database
-   เช่น "https://ชื่อโปรเจกต์-default-rtdb.asia-southeast1.firebasedatabase.app"
-   (ไม่ต้องมี / ปิดท้าย) ถ้าเว้นว่าง จะเก็บไว้ในเบราว์เซอร์ของผู้ใช้เองเท่านั้น */
+
 const DB_URL = "https://msg-path-of-luminary-default-rtdb.asia-southeast1.firebasedatabase.app";
 const DB_BASE = DB_URL.trim().replace(/\/wishes\.json.*$/,"").replace(/\/+$/,"");
 
-/* ---------- ใส่รูปของคุณเอง ----------
-   BACKGROUND_IMAGE : รูปพื้นหลัง เช่น "assets/bg.jpg" (เว้นว่าง "" = ใช้ท้องฟ้ายามค่ำคืนเดิม)
-   STAR_IMAGES      : รูปแทนดวงดาว ใส่ได้หลายรูป เช่น ["assets/star1.png","assets/star2.png"]
-                      แนะนำ PNG/WebP พื้นหลังโปร่งใส ขนาดสี่เหลี่ยมจัตุรัส
-                      (เว้นว่าง [] = ใช้ดาวแบบวาดในโค้ดเดิม)
-   วางไฟล์ไว้ใน repo เดียวกับ index.html เช่นในโฟลเดอร์ assets/ */
+//img
 const BACKGROUND_IMAGE = "";
 const STAR_IMAGES = [];
 const USE_IMG = STAR_IMAGES.length > 0;
 
-/* FAVICON : ไอคอนบนแท็บเบราว์เซอร์ เช่น "assets/icon.png" (เว้นว่าง "" = ใช้รูปดาวเดิม)
-   แนะนำ PNG สี่เหลี่ยมจัตุรัส 64x64 หรือ 128x128 px */
    const FAVICON = "assets/Mahoushiki_Logo.png";
 try { if (FAVICON) document.getElementById("fav").href = FAVICON; } catch {}
 
@@ -146,7 +136,7 @@ const FORTUNES = [
  {h:"เงียบสงบแต่มั่นคง",t:"ไม่ต้องรีบแข่งกับใคร จังหวะของคุณกำลังพอดี",n:5,c:"ส้ม"}
 ];
 
-/* ---------- เก็บข้อมูล ---------- */
+/* database */
 const lsGet = () => { try { return JSON.parse(localStorage.getItem("loydao")||"[]"); } catch { return []; } };
 const lsSet = v => { try { localStorage.setItem("loydao", JSON.stringify(v)); } catch {} };
 const store = {
@@ -214,10 +204,10 @@ function openWrite(){
     }},
     h("h2",{},"เขียนคำอธิษฐาน"), prev,
     h("label",{for:"ta"},"คำอธิษฐาน"), ta, h("div",{style:"text-align:right"},cnt),
-    h("label",{for:"nm"},"ชื่อเล่น"), nm,
+    h("label",{for:"nm"},"ชื่อตัวละคร"), nm,
     h("div",{class:"lbl"},"เลือกรูปดาว"), shapeRow,
     colorWrap,
-    h("button",{class:"btn primary go",type:"submit"},"ปล่อยดาวขึ้นฟ้า"));
+    h("button",{class:"btn primary go",type:"submit"},"อธิษฐาน"));
   paint(); show(form); ta.focus();
 }
 
