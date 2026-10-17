@@ -460,7 +460,7 @@ function autoStartMusic(){
   if (!bgm || prefGet() === "off") return;
   bgm.play().then(()=>{ musicOn = true; musicBox.hidden = false; paintMusic(); fadeTo(vol, 1500); }).catch(()=>{
     musicOn = false; paintMusic();   // <-- เพิ่มบรรทัดนี้
-    const evs = ["pointerup","click","keydown","touchend"];
+    const evs = ["touchend","click","keydown"];
     const once = () => { evs.forEach(ev => removeEventListener(ev, once, true)); hideHint(); if (!musicOn && prefGet() !== "off") { musicBox.hidden = false; playMusic(); } };
     evs.forEach(ev => addEventListener(ev, once, true));
   });
