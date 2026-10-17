@@ -166,6 +166,15 @@ body.pre #musicBox{opacity:0;pointer-events:none}
 .sbtn:hover .spin-f,.sbtn:hover .spin-r{animation-play-state:running}
 @keyframes sspin{to{transform:rotate(360deg)}}
 @media (prefers-reduced-motion:reduce){.sstack,.sl{transition:none}.spin-f,.spin-r{animation:none}}
+@media (min-width:900px) and (hover:hover) and (pointer:fine){
+  #splash > .sbtn.sbtn.sbtn,
+  #splash > .btn.btn.btn{
+    position:absolute;
+    right:calc(60px + env(safe-area-inset-right));
+    bottom:calc(40px + env(safe-area-inset-bottom));
+    margin:0;
+  }
+}
 </style>
 </head>
 <body>
