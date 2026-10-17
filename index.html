@@ -69,13 +69,65 @@ small{color:var(--mute)}
 #toast{position:fixed;left:50%;top:calc(20px + env(safe-area-inset-top));transform:translate(-50%,-90px);z-index:20;
  background:var(--gold);color:#2b1b3d;padding:10px 18px;border-radius:999px;transition:transform .35s;max-width:90vw}
 #toast.on{transform:translate(-50%,0)}
-@media (prefers-reduced-motion:reduce){.dot,.spin{animation:none}}
+#splash{--tm:1000ms;position:fixed;inset:0;z-index:50;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:14px;
+ text-align:center;padding:24px calc(24px + env(safe-area-inset-right)) calc(40px + env(safe-area-inset-bottom)) 24px;
+ background:radial-gradient(ellipse at 50% 42%,rgba(14,26,59,.5),rgba(14,26,59,.92));
+ transition:opacity var(--tm),transform var(--tm) ease-in,filter var(--tm),clip-path var(--tm) ease-in-out}
+#splash.out{pointer-events:none}
+#splash[data-t=fade].out{opacity:0}
+#splash[data-t=zoom].out{opacity:0;transform:scale(2.2);filter:blur(8px)}
+#splash[data-t=iris]{clip-path:circle(150% at 50% 50%)}
+#splash[data-t=iris].out{clip-path:circle(0% at 50% 50%)}
+#splash[data-t=wipe]{clip-path:inset(0 0 0 0)}
+#splash[data-t=wipe].out{clip-path:inset(0 0 100% 0)}
+.flash{position:fixed;inset:0;z-index:60;pointer-events:none;opacity:0;
+ background:radial-gradient(circle at 50% 55%,#fff 0,#ffe7ac 28%,rgba(255,217,130,0) 72%);animation:fl var(--tm,1000ms) ease-in-out forwards}
+@keyframes fl{0%{opacity:0;transform:scale(.4)}45%{opacity:1;transform:scale(1.6)}100%{opacity:0;transform:scale(2)}}
+nav,header{transition:opacity .8s .2s,transform .8s .2s}
+body.pre nav{opacity:0;transform:translateY(30px)}
+body.pre header{opacity:0}
+.btn.imgbtn,.btn.primary.imgbtn,.x.imgbtn{background:none;border:0;padding:0;border-radius:0}
+.btn.imgbtn:hover,.btn.primary.imgbtn:hover{background:none;filter:brightness(1.15);transform:scale(1.04)}
+#bMusic{position:fixed;top:calc(14px + env(safe-area-inset-top));right:14px;z-index:6;width:44px;height:44px;display:grid;place-items:center;padding:0;
+ border-radius:50%;border:1.5px solid rgba(255,217,130,.55);background:rgba(23,20,70,.7);color:var(--gold);transition:opacity .8s .2s}
+#bMusic[hidden]{display:none}
+#bMusic:hover{background:rgba(60,45,120,.8)}
+#bMusic svg{width:24px;height:24px}
+#bMusic.mimg{width:auto;height:auto;border:0;border-radius:0;background:none}
+#bMusic.mimg img{display:block;height:44px;width:auto}
+#bMusic.mimg.off img{opacity:.45}
+body.pre #bMusic{opacity:0;pointer-events:none}
+.loader{width:min(82vw,var(--lw,420px));margin-top:18px;transition:opacity .5s}
+.loader.done{opacity:0}
+.loader .lt{margin-top:12px;font-size:15px;color:var(--mute)}
+.track{position:relative;height:var(--lh,14px);border-radius:var(--lr,999px);background:var(--ltrack,rgba(255,255,255,.14));
+ border:1.5px solid var(--lborder,rgba(255,217,130,.5));box-shadow:inset 0 1px 3px rgba(0,0,0,.4);padding:var(--linset,0px)}
+.fill{height:100%;width:0;border-radius:inherit;background:var(--lfill,linear-gradient(90deg,#ff9fb8,var(--gold)));box-shadow:0 0 12px var(--lglow,rgba(255,217,130,.6))}
+.track.img{background:var(--ltrack) center/100% 100% no-repeat;border:0;box-shadow:none;border-radius:0}
+.track.img .fill{box-shadow:none;border-radius:0}
+.runner{position:absolute;left:0;bottom:calc(100% + 2px);transform:translateX(-50%);display:flex;flex-direction:column;align-items:center;gap:2px;pointer-events:none}
+.runner b{font-size:15px;font-weight:600;color:var(--gold);text-shadow:0 1px 6px rgba(5,5,24,.9)}
+.runner .ic{width:var(--isz,44px);height:var(--isz,44px);animation:bob .5s ease-in-out infinite alternate;filter:drop-shadow(0 0 8px var(--gold))}
+.runner .ic img,.runner .ic svg{width:100%;height:100%;display:block;object-fit:contain}
+@keyframes bob{from{transform:translateY(0) rotate(-6deg)}to{transform:translateY(-6px) rotate(6deg)}}
+.pop{animation:pop .6s ease-out backwards}
+@keyframes pop{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:none}}
+.imgbtn img{display:block;height:56px;width:auto;max-width:100%;pointer-events:none}
+#splash .imgbtn img{height:76px}
+.x.imgbtn img{height:34px}
+.go.imgbtn{width:auto;display:block;margin:18px auto 0}
+.go.imgbtn img{height:60px}
+#splash img{width:min(52vw,220px);height:auto;max-height:30vh;object-fit:contain}
+#splash h1{font-size:clamp(48px,13vw,104px);line-height:1.05;text-shadow:0 0 28px rgba(255,217,130,.45)}
+#splash .sub{margin:0;font-size:clamp(18px,4.5vw,26px);color:var(--ink)}
+#splash .txt{margin:0;max-width:30em;color:var(--mute);line-height:1.7}
+#splash .btn{margin-top:14px;padding:13px 44px;font-size:19px}
+@media (prefers-reduced-motion:reduce){.dot,.spin,.runner .ic,.pop{animation:none}#splash,nav,header{transition:none}}
 </style>
 </head>
 <body>
 <header>
   <p id="count"></p>
-</header>
 </header>
 <div id="sky"></div>
 <nav>
@@ -85,7 +137,7 @@ small{color:var(--mute)}
 <div id="toast" role="status" aria-live="polite"></div>
 
 <script>
-/* error */
+
 addEventListener("error", e => {
   const d = document.createElement("div");
   d.style.cssText = "position:fixed;left:8px;right:8px;top:8px;z-index:99;background:#ffe3e3;color:#7a0000;padding:10px 14px;border-radius:10px;font:14px/1.5 system-ui,sans-serif";
@@ -98,13 +150,57 @@ addEventListener("error", e => {
 const DB_URL = "https://msg-path-of-luminary-default-rtdb.asia-southeast1.firebasedatabase.app";
 const DB_BASE = DB_URL.trim().replace(/\/wishes\.json.*$/,"").replace(/\/+$/,"");
 
-//img
 const BACKGROUND_IMAGE = "";
 const STAR_IMAGES = [];
 const USE_IMG = STAR_IMAGES.length > 0;
 
+/* starttitle */
+const SPLASH_TITLE = "";
+const SPLASH_SUBTITLE = "น่านฟ้าทะเลดาว";
+const SPLASH_TEXT = "คำโปรยยังคิดไม่ออกง่ะ";
+const SPLASH_IMAGE = "assets/seisenseki-logo.png";
+const START_LABEL = "START";
+
+/* imgbutt */
+const BUTTON_IMAGES = { write:"", start:"", submit:"", close:"", music:"", musicOff:"" };
+
+/* Title */
+const SPLASH_BACKGROUND = "";
+const SPLASH_ALIGN = "bottom";
+/* ขยับตำแหน่งแต่ละส่วนของหน้า Title ด้วย [แนวนอน, แนวตั้ง]
+   ค่าบวก = ไปทางขวา / ลงล่าง  ค่าลบ = ไปทางซ้าย / ขึ้นบน  ใส่เป็นตัวเลข (px) หรือข้อความ เช่น ["0", "-8vh"]
+   ตัวอย่าง: SPLASH_BUTTON_OFFSET = [0, 60] คือเลื่อนปุ่มลงอีก 60px */
+const SPLASH_LOGO_SIZE = 220;          // ความกว้างโลโก้ (px)
+const SPLASH_LOGO_OFFSET = [0, 0];     // ตำแหน่งโลโก้
+const SPLASH_TEXT_OFFSET = [0, 0];     // ตำแหน่งชื่อ + ข้อความใต้ชื่อ
+const SPLASH_BUTTON_OFFSET = [0, 0];   // ตำแหน่งปุ่มเริ่ม และแถบโหลด
+const TRANSITION = "flash";
+const TRANSITION_MS = 1000;
+
+/* loadingbar */
+const LOADER_ICON = "";
+const LOADER_ICON_SIZE = 44;
+const LOADER_TEXT = "loading…";
+const LOADER_MIN_MS = 2200;
+
+/* assloadingbar */
+const LOADER_COLORS = ["#ff9fb8", "#fff18a"];
+const LOADER_TRACK_COLOR = "rgba(255,255,255,.14)";
+const LOADER_BORDER_COLOR = "rgba(255,217,130,.5)";
+const LOADER_WIDTH = 420;
+const LOADER_HEIGHT = 14;
+const LOADER_RADIUS = "999px";
+const LOADER_TRACK_IMAGE = "";
+const LOADER_FILL_IMAGE = "";
+const LOADER_FILL_INSET = 0;
+
+/* bgm */
+const MUSIC_SRC = "assets/Hoshiboshisanoffvocal.m4a";
+const MUSIC_VOLUME = 0.5;
+
+ 
 const FAVICON = "assets/Mahoushiki_Logo.png";
-try { if (FAVICON) document.getElementById("fav").href = FAVICON; } catch {}
+try { if (FAVICON) { const f = document.getElementById("fav"); f.removeAttribute("type"); f.href = FAVICON + (FAVICON.startsWith("data:") ? "" : "?v=2"); } } catch {}
 
 const COLORS = ["#ffd982","#ff9fb8","#9fd8ff","#b9a6ff","#a8f0c6","#ffb27a"];
 const COLOR_NAMES = ["ทอง","ชมพู","ฟ้า","ม่วง","เขียวมินต์","ส้ม"];
@@ -138,7 +234,7 @@ const FORTUNES = [
  {h:"เงียบสงบแต่มั่นคง",t:"ไม่ต้องรีบแข่งกับใคร จังหวะของคุณกำลังพอดี",n:5,c:"ส้ม"}
 ];
 
-/* database */
+
 const lsGet = () => { try { return JSON.parse(localStorage.getItem("loydao")||"[]"); } catch { return []; } };
 const lsSet = v => { try { localStorage.setItem("loydao", JSON.stringify(v)); } catch {} };
 const store = {
@@ -158,7 +254,7 @@ const store = {
 const clean = w => ({ t:String(w.t||"").slice(0,140), n:String(w.n||"").slice(0,20),
   s:(USE_IMG?STAR_IMAGES.includes(w.s):SHAPES[w.s])?w.s:randShape(), c:COLORS.includes(w.c)?w.c:COLORS[0], at:+w.at||0 });
 
-/* ---------- ตัวช่วย ---------- */
+ 
 const $ = id => document.getElementById(id);
 const h = (tag, a={}, ...kids) => { const e=document.createElement(tag);
   for (const k in a) k.startsWith("on") ? e[k]=a[k] : k==="class" ? e.className=a[k] : e.setAttribute(k,a[k]);
@@ -167,6 +263,8 @@ const starSVG = (s,c) => {
   if (USE_IMG) { const src = STAR_IMAGES.includes(s) ? s : STAR_IMAGES[0]; return `<img src="${src.replace(/"/g,"%22")}" alt="" draggable="false">`; }
   const sh=SHAPES[s]||SHAPES.star5;
   return `<svg viewBox="-12 -12 24 24" aria-hidden="true"><path d="${sh.d}" ${sh.t?`transform="${sh.t}"`:""} fill="${c}" stroke="${c}" stroke-width="1.4" stroke-linejoin="round"/></svg>`; };
+const imgBtn = (b, key, label) => { const src = BUTTON_IMAGES[key]; if (!src) return b;
+  b.classList.add("imgbtn"); b.replaceChildren(h("img",{src,alt:"",draggable:"false"})); b.setAttribute("aria-label",label); return b; };
 const starEl = (cls,s,c) => { const e=h("div",{class:cls}); e.style.setProperty("--gc",c); e.innerHTML=starSVG(s,c); return e; };
 const reduce = matchMedia("(prefers-reduced-motion: reduce)").matches;
 let toastT; const toast = m => { const t=$("toast"); t.textContent=m; t.classList.add("on"); clearTimeout(toastT); toastT=setTimeout(()=>t.classList.remove("on"),3200); };
@@ -174,7 +272,7 @@ let toastT; const toast = m => { const t=$("toast"); t.textContent=m; t.classLis
 /* ---------- กล่องข้อความ ---------- */
 const dlg = $("dlg");
 dlg.addEventListener("click", e => { if (e.target===dlg) dlg.close(); });
-const show = (...nodes) => { dlg.replaceChildren(h("button",{class:"x","aria-label":"ปิด",onclick:()=>dlg.close()},"×"),...nodes); if(!dlg.open) dlg.showModal(); };
+const show = (...nodes) => { dlg.replaceChildren(imgBtn(h("button",{class:"x","aria-label":"ปิด",onclick:()=>dlg.close()},"×"),"close","ปิด"),...nodes); if(!dlg.open) dlg.showModal(); };
 
 function showWish(w){
   show(starEl("big",w.s,w.c), h("p",{class:"wish"},w.t), h("p",{class:"by"}, w.n ? "จาก "+w.n : "จากผู้ไม่ประสงค์ออกนาม"));
@@ -209,7 +307,7 @@ function openWrite(){
     h("label",{for:"nm"},"ชื่อตัวละคร"), nm,
     h("div",{class:"lbl"},"เลือกรูปดาว"), shapeRow,
     colorWrap,
-    h("button",{class:"btn primary go",type:"submit"},"อธิษฐาน"));
+    imgBtn(h("button",{class:"btn primary go",type:"submit"},"อธิษฐาน"),"submit","อธิษฐาน"));
   paint(); show(form); ta.focus();
 }
 
@@ -229,7 +327,6 @@ function showFortune(it){
 }
 const showItem = it => it.fortune ? showFortune(it) : showWish(it);
 
-/* ---------- ท้องฟ้า ---------- */
 let pool = [...SEED];
 const active = new Set();
 const maxActive = () => innerWidth<600 ? 9 : 16;
@@ -263,22 +360,150 @@ function spawnRandom(progress=0){
 }
 
 if (BACKGROUND_IMAGE) document.body.style.background =
-  `linear-gradient(rgba(11,14,43,.25),rgba(42,28,85,.35)), url("${encodeURI(BACKGROUND_IMAGE).replace(/"/g,"%22")}") center/cover fixed no-repeat`;
+  `linear-gradient(rgba(14,26,59,.25),rgba(42,28,85,.35)), url("${encodeURI(BACKGROUND_IMAGE).replace(/"/g,"%22")}") center/cover fixed no-repeat`;
 for (let i=0;i<70;i++){
   const d=h("div",{class:"dot"}), s=Math.random()*2.2+.8;
   d.style.cssText=`left:${Math.random()*100}%;top:${Math.random()*80}%;width:${s}px;height:${s}px;--d:${2+Math.random()*4}s`;
   document.body.prepend(d);
 }
 
-$("bWrite").onclick=openWrite;
+$("bWrite").onclick=openWrite; imgBtn($("bWrite"),"write","เขียนคำอธิษฐาน");
 
-(async () => {
+/* music */
+const bMusic = h("button",{id:"bMusic",type:"button",hidden:"","aria-label":"เปิด/ปิดเพลง"});
+let bgm = null, musicOn = false, fadeT;
+const ICON_ON = '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 9v6h4l5 4V5L7 9H3z" fill="currentColor"/><path d="M15.5 8.5a5 5 0 0 1 0 7M18 6a8.5 8.5 0 0 1 0 12" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>';
+const ICON_OFF = '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 9v6h4l5 4V5L7 9H3z" fill="currentColor"/><path d="M16 9l5 6M21 9l-5 6" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>';
+const prefGet = () => { try { return localStorage.getItem("loydao_music"); } catch { return null; } };
+const prefSet = v => { try { localStorage.setItem("loydao_music", v); } catch {} };
+function paintMusic(){
+  const img = musicOn ? BUTTON_IMAGES.music : (BUTTON_IMAGES.musicOff || BUTTON_IMAGES.music);
+  bMusic.setAttribute("aria-pressed", musicOn);
+  bMusic.title = musicOn ? "ปิดเพลง" : "เปิดเพลง";
+  if (img) { bMusic.className = "mimg" + (musicOn || BUTTON_IMAGES.musicOff ? "" : " off"); bMusic.innerHTML = `<img src="${img.replace(/"/g,"%22")}" alt="" draggable="false">`; }
+  else { bMusic.className = ""; bMusic.innerHTML = musicOn ? ICON_ON : ICON_OFF; }
+}
+function fadeTo(v, ms, done){
+  clearInterval(fadeT); const from = bgm.volume, t0 = performance.now();
+  fadeT = setInterval(()=>{ const k = Math.min(1,(performance.now()-t0)/ms); bgm.volume = from + (v-from)*k; if (k>=1){ clearInterval(fadeT); done && done(); } }, 50);
+}
+function playMusic(){
+  bgm.play().then(()=>{ musicOn = true; paintMusic(); fadeTo(MUSIC_VOLUME, 1500); }).catch(()=>{ musicOn = false; paintMusic(); });
+}
+function startMusic(){
+  if (!bgm) return;
+  bMusic.hidden = false;
+  if (prefGet() === "off") { musicOn = false; paintMusic(); return; }
+  playMusic();
+}
+if (MUSIC_SRC) {
+  bgm = new Audio(MUSIC_SRC); bgm.loop = true; bgm.volume = 0; bgm.preload = "auto";
+  paintMusic(); document.body.append(bMusic);
+  bMusic.onclick = () => {
+    if (musicOn) { prefSet("off"); musicOn = false; paintMusic(); fadeTo(0, 400, ()=>bgm.pause()); }
+    else { prefSet("on"); playMusic(); }
+  };
+  document.addEventListener("visibilitychange", () => {
+    if (document.hidden) bgm.pause(); else if (musicOn) bgm.play().catch(()=>{});
+  });
+}
+
+/* loadingtile */
+const withTimeout = (p, ms, fallback) => Promise.race([p, new Promise(r=>setTimeout(()=>r(fallback), ms))]);
+const preload = src => withTimeout(new Promise(r=>{ const i=new Image(); i.onload=i.onerror=()=>r(); i.src=src; }), 10000);
+const dataReady = withTimeout((async () => {
   const loaded = (await store.load()).map(clean).filter(w=>w.t);
   pool = [...SEED, ...loaded]; updateCount();
+})(), 8000);
+
+function startSky(){
   const n = Math.min(maxActive()-3, 7);
   for (let i=0;i<n;i++) spawnRandom(.1+Math.random()*.7);
   setInterval(spawnRandom, 2300);
   if (DB_BASE) setInterval(async()=>{ const l=(await store.load()).map(clean).filter(w=>w.t); pool=[...SEED,...l]; updateCount(); }, 60000);
+}
+
+(function(){
+  const ms = reduce ? 0 : Math.max(0, TRANSITION_MS);
+  const type = ["fade","zoom","iris","wipe","flash"].includes(TRANSITION) ? TRANSITION : "fade";
+  const sp = h("div",{id:"splash",role:"region","aria-label":"หน้าเริ่มต้น","data-t":type});
+  sp.style.setProperty("--tm", ms+"ms");
+  if (SPLASH_BACKGROUND) sp.style.background =
+    `linear-gradient(rgba(14,26,59,.2),rgba(14,26,59,.5)), url("${encodeURI(SPLASH_BACKGROUND).replace(/"/g,"%22")}") center/cover no-repeat`;
+  sp.style.justifyContent = ({top:"flex-start",bottom:"flex-end"})[SPLASH_ALIGN] || "center";
+  const off = v => Array.isArray(v) ? v.map(n => typeof n === "number" ? n+"px" : n).join(" ") : "";
+  if (SPLASH_IMAGE) {
+    const lg = h("img",{src:SPLASH_IMAGE,alt:""});
+    lg.style.width = `min(80vw, ${SPLASH_LOGO_SIZE}px)`; lg.style.maxHeight = "60vh"; lg.style.translate = off(SPLASH_LOGO_OFFSET);
+    sp.append(lg);
+  }
+  [SPLASH_TITLE && h("h1",{},SPLASH_TITLE), SPLASH_SUBTITLE && h("p",{class:"sub"},SPLASH_SUBTITLE), SPLASH_TEXT && h("p",{class:"txt"},SPLASH_TEXT)]
+    .filter(Boolean).forEach(el => { el.style.translate = off(SPLASH_TEXT_OFFSET); sp.append(el); });
+
+  /* ปุ่มเริ่ม (จะโผล่หลังโหลดครบ) */
+  const go = imgBtn(h("button",{class:"btn primary",type:"button"},START_LABEL),"start",START_LABEL);
+  let started = false;
+  go.onclick = () => {
+    if (started) return; started = true;
+    startMusic();
+    document.body.classList.remove("pre");
+    sp.classList.add("out");
+    if (type === "flash") {
+      const f = h("div",{class:"flash"}); f.style.setProperty("--tm", ms+"ms"); document.body.append(f);
+      setTimeout(()=>sp.remove(), ms*.45); setTimeout(()=>f.remove(), ms+50);
+    } else setTimeout(()=>sp.remove(), ms+50);
+  };
+
+  /* แถบโหลด */
+  const icon = h("div",{class:"ic"});
+  icon.innerHTML = LOADER_ICON
+    ? `<img src="${LOADER_ICON.replace(/"/g,"%22")}" alt="" draggable="false">`
+    : `<svg viewBox="-12 -12 24 24" aria-hidden="true"><path d="${SHAPES.star5.d}" fill="#ffd982" stroke="#ffd982" stroke-width="1.4" stroke-linejoin="round"/></svg>`;
+  const pc = h("b",{},"0%");
+  const runner = h("div",{class:"runner"},pc,icon);
+  const fill = h("div",{class:"fill"});
+  const bar = h("div",{class:"track",role:"progressbar","aria-valuemin":"0","aria-valuemax":"100","aria-valuenow":"0","aria-label":"กำลังโหลด"},fill,runner);
+  const loader = h("div",{class:"loader"},bar,h("div",{class:"lt"},LOADER_TEXT));
+  loader.style.setProperty("--isz", LOADER_ICON_SIZE+"px");
+  loader.style.paddingTop = (LOADER_ICON_SIZE + 38)+"px";
+  loader.style.translate = off(SPLASH_BUTTON_OFFSET); go.style.translate = off(SPLASH_BUTTON_OFFSET);
+  const q = u => `url("${encodeURI(u).replace(/"/g,"%22")}")`;
+  const cols = LOADER_COLORS.length > 1 ? LOADER_COLORS : [LOADER_COLORS[0] || "#fff18a", LOADER_COLORS[0] || "#fff18a"];
+  const setV = (k,v) => loader.style.setProperty(k,v);
+  setV("--lw", LOADER_WIDTH+"px"); setV("--lh", LOADER_HEIGHT+"px"); setV("--lr", LOADER_RADIUS);
+  setV("--ltrack", LOADER_TRACK_COLOR); setV("--lborder", LOADER_BORDER_COLOR); setV("--linset", LOADER_FILL_INSET+"px");
+  setV("--lfill", `linear-gradient(90deg,${cols.join(",")})`);
+  setV("--lglow", `color-mix(in srgb, ${cols[cols.length-1]} 60%, transparent)`);
+  if (LOADER_TRACK_IMAGE) { bar.classList.add("img"); setV("--ltrack", q(LOADER_TRACK_IMAGE)); }
+  if (LOADER_FILL_IMAGE) { fill.style.backgroundImage = q(LOADER_FILL_IMAGE); fill.style.backgroundRepeat = "no-repeat"; fill.style.backgroundPosition = "left center"; }
+  sp.append(loader); document.body.classList.add("pre"); document.body.append(sp);
+
+  /* นับความคืบหน้าจากของจริงที่ต้องโหลด */
+  const urls = [...new Set([BACKGROUND_IMAGE,SPLASH_BACKGROUND,SPLASH_IMAGE,LOADER_ICON,LOADER_TRACK_IMAGE,LOADER_FILL_IMAGE,...STAR_IMAGES,...Object.values(BUTTON_IMAGES)].filter(Boolean))];
+  const tasks = [...urls.map(preload), withTimeout(document.fonts ? document.fonts.ready : Promise.resolve(), 10000), dataReady];
+  let done = 0; tasks.forEach(p => p.then(()=>{ done++; }));
+  const t0 = performance.now(), minMs = reduce ? 500 : Math.max(0, LOADER_MIN_MS);
+  let shown = 0, finished = false;
+
+  const finish = () => {
+    if (finished) return; finished = true;
+    startSky(); loader.classList.add("done");
+    setTimeout(()=>{ loader.remove(); go.classList.add("pop"); sp.append(go); go.focus(); }, 500);
+  };
+  const tick = () => {
+    const real = done / tasks.length;
+    const tp = minMs ? Math.min(1, (performance.now()-t0)/minMs) : 1;
+    const target = real >= 1 ? tp : Math.min(tp, Math.max(real, .9*tp), .99);
+    shown += (target - shown) * .18;
+    if (real >= 1 && tp >= 1 && shown > .995) shown = 1;
+    const p = Math.round(shown*100);
+    fill.style.width = p+"%";
+    runner.style.left = LOADER_FILL_INSET ? `calc(${LOADER_FILL_INSET}px + (100% - ${2*LOADER_FILL_INSET}px) * ${p/100})` : p+"%";
+    if (LOADER_FILL_IMAGE) fill.style.backgroundSize = (bar.clientWidth - 2*LOADER_FILL_INSET)+"px 100%";
+     pc.textContent = p+"%"; bar.setAttribute("aria-valuenow", p);
+    shown >= 1 ? finish() : requestAnimationFrame(tick);
+  };
+  requestAnimationFrame(tick);
 })();
 </script>
 </body>
