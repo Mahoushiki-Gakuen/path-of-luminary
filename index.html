@@ -9,7 +9,7 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Bai+Jamjuree:wght@400;600&display=swap" rel="stylesheet">
 <style>
-:root{--gold:#ffd982;--ink:#f4eeff;--mute:#b9aedb;--night:#0b0e2b;--dusk:#2a1c55;--glow:#7a3a6b;--panel:#171446}
+:root{--gold:#ffd982;--ink:#f4eeff;--mute:#b9aedb;--night:#0b0e2b;--dusk:#2a1c55;--glow:#7a3a6b;--panel:#1e2b61}
 *{box-sizing:border-box}
 html,body{height:100%;margin:0}
 body{font-family:"Bai Jamjuree","Sarabun",system-ui,sans-serif;color:var(--ink);overflow:hidden;
@@ -41,9 +41,10 @@ dialog::backdrop{background:rgba(5,5,24,.72)}
 dialog h2{margin:0 0 12px;font-size:22px;color:var(--gold);font-weight:600}
 .x{position:absolute;top:10px;right:12px;border:0;background:none;font-size:26px;color:var(--mute);line-height:1}
 label,.lbl{display:block;margin:14px 0 6px;color:var(--mute);font-size:14px}
-textarea,input{width:100%;font:inherit;color:var(--ink);background:#0e0c33;border:1.5px solid #4a4390;border-radius:12px;padding:10px 12px}
-textarea{resize:vertical;font-size:18px}
-textarea::placeholder{font-size:12px;opacity:.7}
+textarea,input{width:100%;font:inherit;font-size:18px;color:var(--ink);background:#0c1a33;border:1.5px solid #436490;border-radius:12px;padding:10px 12px}
+textarea{resize:vertical}
+textarea::placeholder,input::placeholder{font-size:13px;opacity:.7}
+textarea:focus,input:focus{border-color:#faf8b4;background:#0c1a33;outline:none}
 small{color:var(--mute)}
 .row{display:flex;gap:8px;flex-wrap:wrap;align-items:center}
 .opt{width:48px;height:48px;padding:8px;border-radius:12px;border:1.5px solid #4a4390;background:#0e0c33}
@@ -102,7 +103,7 @@ const BACKGROUND_IMAGE = "";
 const STAR_IMAGES = [];
 const USE_IMG = STAR_IMAGES.length > 0;
 
-   const FAVICON = "assets/Mahoushiki_Logo.png";
+const FAVICON = "assets/Mahoushiki_Logo.png";
 try { if (FAVICON) document.getElementById("fav").href = FAVICON; } catch {}
 
 const COLORS = ["#ffd982","#ff9fb8","#9fd8ff","#b9a6ff","#a8f0c6","#ffb27a"];
