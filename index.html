@@ -219,7 +219,7 @@ const BACKGROUND_IMAGE = "";
 const BACKGROUND_VIDEO = "assets/background-sea2.mp4";
 const BACKGROUND_VIDEO_POSTER = "";
 const BACKGROUND_DIM = 0.3;
-const STAR_IMAGES = ["assets/star01.png"];
+const STAR_IMAGES = ["assets/star_icon_1.png","assets/star_icon_2.png","assets/star_icon_3.png","assets/star_icon_4.png"];
 const USE_IMG = STAR_IMAGES.length > 0;
 
 /* starttitle */
@@ -542,9 +542,8 @@ function startSky(){
   const type = ["fade","zoom","iris","wipe","flash"].includes(TRANSITION) ? TRANSITION : "fade";
   const sp = h("div",{id:"splash",role:"region","aria-label":"หน้าเริ่มต้น","data-t":type});
   sp.style.setProperty("--tm", ms+"ms");
-  if (SPLASH_BACKGROUND) sp.style.background =
-    `linear-gradient(rgba(14,26,59,.2),rgba(14,26,59,.5)), url("${encodeURI(SPLASH_BACKGROUND).replace(/"/g,"%22")}") center/cover no-repeat`;
-  sp.style.justifyContent = ({top:"flex-start",bottom:"flex-end"})[SPLASH_ALIGN] || "center";
+      if (SPLASH_BACKGROUND) sp.style.background =
+    `url("${encodeURI(SPLASH_BACKGROUND).replace(/"/g,"%22")}") center/cover no-repeat`;
  if (SPLASH_VIDEO && !reduce) {
   const sv = h("video",{class:"svid",autoplay:"",muted:"",loop:"",playsinline:"",preload:"auto","aria-hidden":"true"});
   sv.muted = true; sv.src = SPLASH_VIDEO;
