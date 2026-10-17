@@ -156,8 +156,8 @@ const USE_IMG = STAR_IMAGES.length > 0;
 
 /* starttitle */
 const SPLASH_TITLE = "";
-const SPLASH_SUBTITLE = "น่านฟ้าทะเลดาว";
-const SPLASH_TEXT = "คำโปรยยังคิดไม่ออกง่ะ";
+const SPLASH_SUBTITLE = "";
+const SPLASH_TEXT = "คำโปรยยังคิดไม่ออกง่ะจะมีมั้ย";
 const SPLASH_IMAGE = "assets/seisenseki-logo.png";
 const START_LABEL = "START";
 
@@ -166,14 +166,12 @@ const BUTTON_IMAGES = { write:"", start:"", submit:"", close:"", music:"", music
 
 /* Title */
 const SPLASH_BACKGROUND = "";
-const SPLASH_ALIGN = "bottom";
-/* ขยับตำแหน่งแต่ละส่วนของหน้า Title ด้วย [แนวนอน, แนวตั้ง]
-   ค่าบวก = ไปทางขวา / ลงล่าง  ค่าลบ = ไปทางซ้าย / ขึ้นบน  ใส่เป็นตัวเลข (px) หรือข้อความ เช่น ["0", "-8vh"]
-   ตัวอย่าง: SPLASH_BUTTON_OFFSET = [0, 60] คือเลื่อนปุ่มลงอีก 60px */
-const SPLASH_LOGO_SIZE = 220;          // ความกว้างโลโก้ (px)
-const SPLASH_LOGO_OFFSET = [0, 0];     // ตำแหน่งโลโก้
-const SPLASH_TEXT_OFFSET = [0, 0];     // ตำแหน่งชื่อ + ข้อความใต้ชื่อ
-const SPLASH_BUTTON_OFFSET = [0, 0];   // ตำแหน่งปุ่มเริ่ม และแถบโหลด
+const SPLASH_ALIGN = "center";
+
+const SPLASH_LOGO_SIZE = 300;
+const SPLASH_LOGO_OFFSET = [212, 127];
+const SPLASH_TEXT_OFFSET = [0, 0];
+const SPLASH_BUTTON_OFFSET = [1514, 733];
 const TRANSITION = "flash";
 const TRANSITION_MS = 1000;
 
@@ -187,7 +185,7 @@ const LOADER_MIN_MS = 2200;
 const LOADER_COLORS = ["#ff9fb8", "#fff18a"];
 const LOADER_TRACK_COLOR = "rgba(255,255,255,.14)";
 const LOADER_BORDER_COLOR = "rgba(255,217,130,.5)";
-const LOADER_WIDTH = 420;
+const LOADER_WIDTH = 500;
 const LOADER_HEIGHT = 14;
 const LOADER_RADIUS = "999px";
 const LOADER_TRACK_IMAGE = "";
@@ -197,6 +195,7 @@ const LOADER_FILL_INSET = 0;
 /* bgm */
 const MUSIC_SRC = "assets/Hoshiboshisanoffvocal.m4a";
 const MUSIC_VOLUME = 0.5;
+const MUSIC_AUTOPLAY = true;
 
  
 const FAVICON = "assets/Mahoushiki_Logo.png";
@@ -269,7 +268,7 @@ const starEl = (cls,s,c) => { const e=h("div",{class:cls}); e.style.setProperty(
 const reduce = matchMedia("(prefers-reduced-motion: reduce)").matches;
 let toastT; const toast = m => { const t=$("toast"); t.textContent=m; t.classList.add("on"); clearTimeout(toastT); toastT=setTimeout(()=>t.classList.remove("on"),3200); };
 
-/* ---------- กล่องข้อความ ---------- */
+/* massbox */
 const dlg = $("dlg");
 dlg.addEventListener("click", e => { if (e.target===dlg) dlg.close(); });
 const show = (...nodes) => { dlg.replaceChildren(imgBtn(h("button",{class:"x","aria-label":"ปิด",onclick:()=>dlg.close()},"×"),"close","ปิด"),...nodes); if(!dlg.open) dlg.showModal(); };
@@ -393,8 +392,17 @@ function playMusic(){
 function startMusic(){
   if (!bgm) return;
   bMusic.hidden = false;
+  if (musicOn) return;
   if (prefGet() === "off") { musicOn = false; paintMusic(); return; }
   playMusic();
+}
+function autoStartMusic(){
+  if (!bgm || prefGet() === "off") return;
+  bgm.play().then(()=>{ musicOn = true; bMusic.hidden = false; paintMusic(); fadeTo(MUSIC_VOLUME, 1500); }).catch(()=>{
+    const evs = ["pointerdown","keydown","touchstart"];
+    const once = () => { evs.forEach(ev => removeEventListener(ev, once, true)); if (!musicOn && prefGet() !== "off") { bMusic.hidden = false; playMusic(); } };
+    evs.forEach(ev => addEventListener(ev, once, true));
+  });
 }
 if (MUSIC_SRC) {
   bgm = new Audio(MUSIC_SRC); bgm.loop = true; bgm.volume = 0; bgm.preload = "auto";
@@ -403,9 +411,10 @@ if (MUSIC_SRC) {
     if (musicOn) { prefSet("off"); musicOn = false; paintMusic(); fadeTo(0, 400, ()=>bgm.pause()); }
     else { prefSet("on"); playMusic(); }
   };
-  document.addEventListener("visibilitychange", () => {
+   document.addEventListener("visibilitychange", () => {
     if (document.hidden) bgm.pause(); else if (musicOn) bgm.play().catch(()=>{});
   });
+  if (MUSIC_AUTOPLAY) autoStartMusic();
 }
 
 /* loadingtile */
