@@ -193,7 +193,7 @@ const LOADER_FILL_IMAGE = "";
 const LOADER_FILL_INSET = 0;
 
 /* bgm */
-const MUSIC_SRC = "assets/Hoshiboshisanoffvocal.m4a";
+const MUSIC_SRC = "assets/Hoshiboshisan_offvocal_.mp3";
 const MUSIC_VOLUME = 0.5;
 const MUSIC_AUTOPLAY = true;
 
@@ -214,7 +214,7 @@ const SHAPES = {
 const shapeKeys = () => USE_IMG ? STAR_IMAGES : Object.keys(SHAPES);
 const randShape = i => { const k = shapeKeys(); return k[(i ?? Math.floor(Math.random()*k.length)) % k.length]; };
 const SEED = [
- ["ขอให้พ่อแม่สุขภาพแข็งแรงตลอดไป","A"],["ขอให้สอบผ่านนะ สู้ๆ","B"],["อยากให้แมวที่บ้านอยู่กับเรานานๆ","C"],
+ ["ขอให้พ่อแม่สุขภาพแข็งแรงตลอดไป","A"],["ขอให้สอบผ่านนะ สู้ ๆ","B"],["อยากให้แมวที่บ้านอยู่กับเรานานๆ","C"],
  ["ขอให้ปีหน้าได้เที่ยวทะเลบ่อยๆ","D"],["ขอบคุณทุกคนที่อยู่ข้างกันมาตลอด","E"]
 ].map((x,i)=>({t:x[0],n:x[1],s:randShape(i),c:COLORS[i%6],at:i,seed:1}));
 
