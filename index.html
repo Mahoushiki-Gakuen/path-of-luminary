@@ -208,7 +208,6 @@ addEventListener("error", e => {
   d.textContent = "เกิดข้อผิดพลาด: " + e.message + (e.lineno ? " (บรรทัด " + e.lineno + ")" : "");
   document.body.append(d);
 });
- #splash{background:none}
 </script>
 <script>
 
@@ -544,6 +543,7 @@ function startSky(){
   sp.style.setProperty("--tm", ms+"ms");
       if (SPLASH_BACKGROUND) sp.style.background =
     `url("${encodeURI(SPLASH_BACKGROUND).replace(/"/g,"%22")}") center/cover no-repeat`;
+   sp.style.justifyContent = ({top:"flex-start",bottom:"flex-end"})[SPLASH_ALIGN] || "center";
  if (SPLASH_VIDEO && !reduce) {
   const sv = h("video",{class:"svid",autoplay:"",muted:"",loop:"",playsinline:"",preload:"auto","aria-hidden":"true"});
   sv.muted = true; sv.src = SPLASH_VIDEO;
