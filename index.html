@@ -175,17 +175,20 @@ body.pre #musicBox{opacity:0;pointer-events:none}
     margin:0;
   }
 }
-#splash > .txt.txt.txt{
-  position:absolute;
-  left:calc(100px + env(safe-area-inset-left));
-  top:50%;
-  transform:translateY(-50%);
-  max-width:min(28em,45vw);
-  margin:0;
-  text-align:left;
+@media (min-width:900px){
+  #splash > .txt.txt.txt{
+    position:absolute;
+    left:calc(100px + env(safe-area-inset-left));
+    top:50%;
+    transform:translateY(-50%);
+    max-width:min(28em,45vw);
+    margin:0;
+    text-align:left;
+  }
 }
- @media (min-width:900px){
-  #splash .txt{white-space:pre-line}
+}
+ #splash .txt{white-space:pre-line}
+ @media (max-width:600px){ #splash .txt{font-size:14px} }
 }
 </style>
 </head>
