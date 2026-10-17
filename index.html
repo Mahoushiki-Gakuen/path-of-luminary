@@ -180,9 +180,12 @@ body.pre #musicBox{opacity:0;pointer-events:none}
   left:calc(100px + env(safe-area-inset-left));
   top:50%;
   transform:translateY(-50%);
-  max-width:min(25em,45vw);
+  max-width:min(28em,45vw);
   margin:0;
   text-align:left;
+}
+ @media (min-width:900px){
+  #splash .txt{white-space:pre-line}
 }
 </style>
 </head>
@@ -221,7 +224,7 @@ const USE_IMG = STAR_IMAGES.length > 0;
 /* starttitle */
 const SPLASH_TITLE = "";
 const SPLASH_SUBTITLE = "";
-const SPLASH_TEXT = "『ดวงดาวอธิษฐานล่องลอยบนผืนน้ำ บ้างก็เป็นคำทำนาย』『บ้างก็เป็นคำขอของใครสักคน ลองหยิบมันมาดูสักดวงสิ』";
+const SPLASH_TEXT = "『ดวงดาวอธิษฐานล่องลอยบนผืนน้ำ บ้างก็เป็นคำทำนาย』\n『บ้างก็เป็นคำขอของใครสักคน ลองหยิบมันมาดูสักดวงสิ』";
 const SPLASH_IMAGE = "assets/seisenseki-logo.png";
 const START_LABEL = "START";
 
@@ -239,8 +242,8 @@ const START_HOVER_SCALE = 1.2;
 const START_HOVER_MS = 350;
 
 /* Title */
-const SPLASH_BACKGROUND = "";
-const SPLASH_VIDEO = "assets/title-beta.mp4";
+const SPLASH_BACKGROUND = "assets/background-title.png";
+const SPLASH_VIDEO = "";
 const SPLASH_VIDEO_DIM = 0.35;
 const SPLASH_ALIGN = "bottom";
 
