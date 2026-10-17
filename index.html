@@ -88,15 +88,27 @@ body.pre nav{opacity:0;transform:translateY(30px)}
 body.pre header{opacity:0}
 .btn.imgbtn,.btn.primary.imgbtn,.x.imgbtn{background:none;border:0;padding:0;border-radius:0}
 .btn.imgbtn:hover,.btn.primary.imgbtn:hover{background:none;filter:brightness(1.15);transform:scale(1.04)}
-#bMusic{position:fixed;top:calc(14px + env(safe-area-inset-top));right:14px;z-index:6;width:44px;height:44px;display:grid;place-items:center;padding:0;
- border-radius:50%;border:1.5px solid rgba(255,217,130,.55);background:rgba(23,20,70,.7);color:var(--gold);transition:opacity .8s .2s}
+#musicBox{position:fixed;top:calc(14px + env(safe-area-inset-top));right:14px;z-index:6;transition:opacity .8s .2s}
+#musicBox[hidden]{display:none}
+body.pre #musicBox{opacity:0;pointer-events:none}
+#vol{-webkit-appearance:none;appearance:none;position:absolute;left:50%;top:50%;width:130px;height:6px;margin:0;padding:0;border:0;border-radius:999px;cursor:pointer;
+ transform:translate(-50%,-50%) rotate(-90deg);
+ background:linear-gradient(90deg,var(--gold) var(--v,50%),rgba(255,255,255,.28) var(--v,50%))}
+#vol::-webkit-slider-thumb{-webkit-appearance:none;width:18px;height:18px;border-radius:50%;background:var(--gold);border:2px solid #2b1b3d;box-shadow:0 0 8px rgba(255,241,138,.6)}
+#vol::-moz-range-thumb{width:14px;height:14px;border-radius:50%;background:var(--gold);border:2px solid #2b1b3d}
+#vol:focus-visible{outline:3px solid var(--gold);outline-offset:6px}
+#volPanel{position:absolute;top:calc(100% + 10px);right:0;width:44px;height:164px;border-radius:22px;
+ background:rgba(23,20,70,.94);border:1.5px solid rgba(255,217,130,.55);box-shadow:0 6px 24px rgba(0,0,0,.4)}
+#volPanel[hidden]{display:none}
+
+#bMusic{width:44px;height:44px;display:grid;place-items:center;padding:0;
+ border-radius:50%;border:1.5px solid rgba(255,217,130,.55);background:rgba(23,20,70,.7);color:var(--gold)}
 #bMusic[hidden]{display:none}
 #bMusic:hover{background:rgba(60,45,120,.8)}
 #bMusic svg{width:24px;height:24px}
 #bMusic.mimg{width:auto;height:auto;border:0;border-radius:0;background:none}
 #bMusic.mimg img{display:block;height:44px;width:auto}
 #bMusic.mimg.off img{opacity:.45}
-body.pre #bMusic{opacity:0;pointer-events:none}
 .loader{width:min(82vw,var(--lw,420px));margin-top:18px;transition:opacity .5s}
 .loader.done{opacity:0}
 .loader .lt{margin-top:12px;font-size:15px;color:var(--mute)}
@@ -125,7 +137,7 @@ body.pre #bMusic{opacity:0;pointer-events:none}
 .hint{position:fixed;left:50%;top:calc(16px + env(safe-area-inset-top));transform:translateX(-50%);z-index:55;pointer-events:none;white-space:nowrap;
  background:rgba(23,20,70,.85);border:1.5px solid rgba(255,217,130,.55);padding:8px 16px;border-radius:999px;font-size:14px;color:var(--ink);animation:hint 1.6s ease-in-out infinite alternate}
 @keyframes hint{from{opacity:.55}to{opacity:1}}
- @media (prefers-reduced-motion:reduce){.dot,.spin,.runner .ic,.pop{animation:none}#splash,nav,header{transition:none}}
+@media (prefers-reduced-motion:reduce){.dot,.spin,.runner .ic,.pop,.hint{animation:none}#splash,nav,header{transition:none}}
 </style>
 </head>
 <body>
@@ -182,7 +194,7 @@ const TRANSITION_MS = 1000;
 const LOADER_ICON = "assets/moyashi-icon.png";
 const LOADER_ICON_SIZE = 20;
 const LOADER_TEXT = "loading…";
-const LOADER_MIN_MS = 4400;
+const LOADER_MIN_MS = 4200;
 
 /* assloadingbar */
 const LOADER_COLORS = ["#233765", "#f7f2f0"];
@@ -236,7 +248,7 @@ const FORTUNES = [
  {h:"เงียบสงบแต่มั่นคง",t:"ไม่ต้องรีบแข่งกับใคร จังหวะของคุณกำลังพอดี",n:5,c:"ส้ม"}
 ];
 
-
+/* data */
 const lsGet = () => { try { return JSON.parse(localStorage.getItem("loydao")||"[]"); } catch { return []; } };
 const lsSet = v => { try { localStorage.setItem("loydao", JSON.stringify(v)); } catch {} };
 const store = {
@@ -372,16 +384,30 @@ for (let i=0;i<70;i++){
 $("bWrite").onclick=openWrite; imgBtn($("bWrite"),"write","เขียนคำอธิษฐาน");
 
 /* music */
-const bMusic = h("button",{id:"bMusic",type:"button",hidden:"","aria-label":"เปิด/ปิดเพลง"});
+const bMusic = h("button",{id:"bMusic",type:"button","aria-label":"เปิด/ปิดเพลง"});
+const volIn = h("input",{id:"vol",type:"range",min:"0",max:"100",step:"1","aria-label":"ระดับเสียงเพลง"});
+const volPanel = h("div",{id:"volPanel",hidden:"",role:"group","aria-label":"ตั้งค่าเสียง"},volIn);
+const musicBox = h("div",{id:"musicBox",hidden:""},bMusic,volPanel);
 let bgm = null, musicOn = false, fadeT;
 const ICON_ON = '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 9v6h4l5 4V5L7 9H3z" fill="currentColor"/><path d="M15.5 8.5a5 5 0 0 1 0 7M18 6a8.5 8.5 0 0 1 0 12" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>';
 const ICON_OFF = '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 9v6h4l5 4V5L7 9H3z" fill="currentColor"/><path d="M16 9l5 6M21 9l-5 6" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>';
 const prefGet = () => { try { return localStorage.getItem("loydao_music"); } catch { return null; } };
 const prefSet = v => { try { localStorage.setItem("loydao_music", v); } catch {} };
+const volGet = () => { try { const v = parseFloat(localStorage.getItem("loydao_vol")); return isNaN(v) ? null : Math.min(1, Math.max(0, v)); } catch { return null; } };
+let vol = volGet() || MUSIC_VOLUME;
+volIn.value = prefGet() === "off" ? 0 : Math.round(vol*100); volIn.style.setProperty("--v", volIn.value+"%");
+volIn.oninput = () => {
+  const v = volIn.value/100; volIn.style.setProperty("--v", volIn.value+"%");
+  if (v > 0) { vol = v; try { localStorage.setItem("loydao_vol", v); } catch {} }
+  if (!bgm) return;
+  if (v === 0) { prefSet("off"); if (musicOn) { musicOn = false; paintMusic(); fadeTo(0, 200, ()=>bgm.pause()); } return; }
+  if (musicOn) { clearInterval(fadeT); bgm.volume = vol; }
+  else { prefSet("on"); playMusic(); }
+};
 function paintMusic(){
   const img = musicOn ? BUTTON_IMAGES.music : (BUTTON_IMAGES.musicOff || BUTTON_IMAGES.music);
   bMusic.setAttribute("aria-pressed", musicOn);
-  bMusic.title = musicOn ? "ปิดเพลง" : "เปิดเพลง";
+  bMusic.title = "ตั้งค่าเสียง";
   if (img) { bMusic.className = "mimg" + (musicOn || BUTTON_IMAGES.musicOff ? "" : " off"); bMusic.innerHTML = `<img src="${img.replace(/"/g,"%22")}" alt="" draggable="false">`; }
   else { bMusic.className = ""; bMusic.innerHTML = musicOn ? ICON_ON : ICON_OFF; }
 }
@@ -390,35 +416,35 @@ function fadeTo(v, ms, done){
   fadeT = setInterval(()=>{ const k = Math.min(1,(performance.now()-t0)/ms); bgm.volume = from + (v-from)*k; if (k>=1){ clearInterval(fadeT); done && done(); } }, 50);
 }
 function playMusic(){
-  bgm.play().then(()=>{ musicOn = true; paintMusic(); fadeTo(MUSIC_VOLUME, 1500); }).catch(()=>{ musicOn = false; paintMusic(); });
+  bgm.play().then(()=>{ musicOn = true; paintMusic(); fadeTo(vol, 1500); }).catch(()=>{ musicOn = false; paintMusic(); });
 }
 function startMusic(){
   if (!bgm) return;
-  bMusic.hidden = false;
+  musicBox.hidden = false;
   if (musicOn) return;
   if (prefGet() === "off") { musicOn = false; paintMusic(); return; }
   playMusic();
 }
+let musicHint = null;
+const hideHint = () => { if (musicHint) { musicHint.remove(); musicHint = null; } };
 function autoStartMusic(){
- let musicHint = null;
- const hideHint = () => { if (musicHint) { musicHint.remove(); musicHint = null; } };
- function autoStartMusic(){
   if (!bgm || prefGet() === "off") return;
-  bgm.play().then(()=>{ musicOn = true; bMusic.hidden = false; paintMusic(); fadeTo(MUSIC_VOLUME, 1500); }).catch(()=>{
-    musicHint = h("div",{class:"hint"},"🔊 แตะที่ใดก็ได้เพื่อเปิดเสียงเพลง"); document.body.append(musicHint);
+  bgm.play().then(()=>{ musicOn = true; musicBox.hidden = false; paintMusic(); fadeTo(vol, 1500); }).catch(()=>{
     const evs = ["pointerup","click","keydown","touchend"];
-    const once = () => { evs.forEach(ev => removeEventListener(ev, once, true)); hideHint(); if (!musicOn && prefGet() !== "off") { bMusic.hidden = false; playMusic(); } };
+    const once = () => { evs.forEach(ev => removeEventListener(ev, once, true)); hideHint(); if (!musicOn && prefGet() !== "off") { musicBox.hidden = false; playMusic(); } };
     evs.forEach(ev => addEventListener(ev, once, true));
   });
 }
+
 if (MUSIC_SRC) {
   bgm = new Audio(MUSIC_SRC); bgm.loop = true; bgm.volume = 0; bgm.preload = "auto";
-  paintMusic(); document.body.append(bMusic);
-  bMusic.onclick = () => {
-    if (musicOn) { prefSet("off"); musicOn = false; paintMusic(); fadeTo(0, 400, ()=>bgm.pause()); }
-    else { prefSet("on"); playMusic(); }
-  };
-   document.addEventListener("visibilitychange", () => {
+  paintMusic(); document.body.append(musicBox);
+  const closePanel = () => { volPanel.hidden = true; bMusic.setAttribute("aria-expanded","false"); };
+  bMusic.setAttribute("aria-expanded","false");
+  bMusic.onclick = () => { volPanel.hidden = !volPanel.hidden; bMusic.setAttribute("aria-expanded", String(!volPanel.hidden)); };
+  document.addEventListener("pointerdown", e => { if (!volPanel.hidden && !musicBox.contains(e.target)) closePanel(); });
+  document.addEventListener("keydown", e => { if (e.key === "Escape" && !volPanel.hidden) { closePanel(); bMusic.focus(); } });
+  document.addEventListener("visibilitychange", () => {
     if (document.hidden) bgm.pause(); else if (musicOn) bgm.play().catch(()=>{});
   });
   if (MUSIC_AUTOPLAY) autoStartMusic();
