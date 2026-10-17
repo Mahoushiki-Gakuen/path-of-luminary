@@ -155,6 +155,7 @@ body.pre #musicBox{opacity:0;pointer-events:none}
 .sstack{position:relative;display:block;height:var(--sh,76px);transition:transform var(--sms,350ms) cubic-bezier(.2,.8,.2,1)}
 .sbtn:hover .sstack{transform:scale(var(--ssc,1.08))}
 .sbtn:active .sstack{transform:scale(1.02)}
+.sbtn:focus,.sbtn:focus-visible{outline:none}
 .sl{display:block;height:100%;transition:transform var(--lms,var(--sms,350ms)) cubic-bezier(.2,.8,.2,1) var(--ld,0ms)}
 .sl:not(:first-child){position:absolute;left:0;top:0;width:100%}
 .sbtn:hover .sl{transform:var(--tf,none)}
@@ -210,12 +211,12 @@ const START_LABEL = "START";
 const BUTTON_IMAGES = { write:"", start:"", submit:"", close:"", music:"", musicOff:"" };
 const START_LAYERS = [
   { src:"assets/start-button-backdrop.png" },
-  { src:"assets/start-button-dropshadow.png", rotate:-50, scale:1.1 },
+  { src:"assets/start-button-dropshadow.png", x:6, y:8,rotate:-50, scale:1.1 },
   { src:"assets/start-button-star.png",       rotate:25, scale:1.1 },
   { src:"assets/start-button-array.png",      rotate:-25, scale:1.1 },
   { src:"assets/start-button-font.png",       scale:1.1 }
 ];
-const START_BUTTON_HEIGHT = 155;
+const START_BUTTON_HEIGHT = 160;
 const START_HOVER_SCALE = 1.08;
 const START_HOVER_MS = 350;
 
@@ -229,7 +230,7 @@ const SPLASH_LOGO_CORNER = true;
 const SPLASH_LOGO_SIZE = 340;
 const SPLASH_LOGO_OFFSET = [0, 0];
 const SPLASH_TEXT_OFFSET = [0, 0];
-const SPLASH_BUTTON_OFFSET = [0, 0];
+const SPLASH_BUTTON_OFFSET = [0, 10];
 const TRANSITION = "flash";
 const TRANSITION_MS = 1000;
 
