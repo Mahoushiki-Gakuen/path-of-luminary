@@ -474,7 +474,7 @@ function startSky(){
   const bar = h("div",{class:"track",role:"progressbar","aria-valuemin":"0","aria-valuemax":"100","aria-valuenow":"0","aria-label":"กำลังโหลด"},fill,runner);
   const loader = h("div",{class:"loader"},bar,h("div",{class:"lt"},LOADER_TEXT));
   loader.style.setProperty("--isz", LOADER_ICON_SIZE+"px");
-  loader.style.paddingTop = (LOADER_ICON_SIZE + 38)+"px";
+  loader.style.paddingTop = (LOADER_ICON_SIZE + 18)+"px";
   loader.style.translate = off(SPLASH_BUTTON_OFFSET); go.style.translate = off(SPLASH_BUTTON_OFFSET);
   const q = u => `url("${encodeURI(u).replace(/"/g,"%22")}")`;
   const cols = LOADER_COLORS.length > 1 ? LOADER_COLORS : [LOADER_COLORS[0] || "#fff18a", LOADER_COLORS[0] || "#fff18a"];
@@ -487,7 +487,7 @@ function startSky(){
   if (LOADER_FILL_IMAGE) { fill.style.backgroundImage = q(LOADER_FILL_IMAGE); fill.style.backgroundRepeat = "no-repeat"; fill.style.backgroundPosition = "left center"; }
   sp.append(loader); document.body.classList.add("pre"); document.body.append(sp);
 
-  /* นับความคืบหน้าจากของจริงที่ต้องโหลด */
+  /* loadingper */
   const urls = [...new Set([BACKGROUND_IMAGE,SPLASH_BACKGROUND,SPLASH_IMAGE,LOADER_ICON,LOADER_TRACK_IMAGE,LOADER_FILL_IMAGE,...STAR_IMAGES,...Object.values(BUTTON_IMAGES)].filter(Boolean))];
   const tasks = [...urls.map(preload), withTimeout(document.fonts ? document.fonts.ready : Promise.resolve(), 10000), dataReady];
   let done = 0; tasks.forEach(p => p.then(()=>{ done++; }));
