@@ -147,6 +147,7 @@ body.pre #musicBox{opacity:0;pointer-events:none}
 #splash .svid{position:absolute;inset:0;width:100%;height:100%;max-height:none;object-fit:cover;z-index:-2;pointer-events:none}
 #splash .sdim{position:absolute;inset:0;z-index:-1;pointer-events:none}
 #splash{isolation:isolate}
+#splash .txt,#splash h1,#splash .sub,#splash img,#splash .loader,#splash .btn{position:relative;z-index:1}
 @media (prefers-reduced-motion:reduce){#splash .svid{display:none}}
 </style>
 </head>
@@ -175,8 +176,8 @@ addEventListener("error", e => {
 const DB_URL = "https://msg-path-of-luminary-default-rtdb.asia-southeast1.firebasedatabase.app";
 const DB_BASE = DB_URL.trim().replace(/\/wishes\.json.*$/,"").replace(/\/+$/,"");
 
-const BACKGROUND_IMAGE = "bgsea-beta.gif";
-const BACKGROUND_VIDEO = "";   // เว้นว่าง "" ถ้าไม่ใช้
+const BACKGROUND_IMAGE = "assets/bgsea-beta.gif";
+const BACKGROUND_VIDEO = "";
 const BACKGROUND_VIDEO_POSTER = "";
 const BACKGROUND_DIM = 0.3;
 const STAR_IMAGES = [];
