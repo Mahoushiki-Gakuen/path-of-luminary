@@ -122,7 +122,10 @@ body.pre #bMusic{opacity:0;pointer-events:none}
 #splash .sub{margin:0;font-size:clamp(18px,4.5vw,26px);color:var(--ink)}
 #splash .txt{margin:0;max-width:30em;color:var(--mute);line-height:1.7}
 #splash .btn{margin-top:14px;padding:13px 44px;font-size:19px}
-@media (prefers-reduced-motion:reduce){.dot,.spin,.runner .ic,.pop{animation:none}#splash,nav,header{transition:none}}
+.hint{position:fixed;left:50%;top:calc(16px + env(safe-area-inset-top));transform:translateX(-50%);z-index:55;pointer-events:none;white-space:nowrap;
+ background:rgba(23,20,70,.85);border:1.5px solid rgba(255,217,130,.55);padding:8px 16px;border-radius:999px;font-size:14px;color:var(--ink);animation:hint 1.6s ease-in-out infinite alternate}
+@keyframes hint{from{opacity:.55}to{opacity:1}}
+ @media (prefers-reduced-motion:reduce){.dot,.spin,.runner .ic,.pop{animation:none}#splash,nav,header{transition:none}}
 </style>
 </head>
 <body>
@@ -172,14 +175,14 @@ const SPLASH_LOGO_SIZE = 440;
 const SPLASH_LOGO_OFFSET = [-600, -400];
 const SPLASH_TEXT_OFFSET = [0, 0];
 const SPLASH_BUTTON_OFFSET = [0, 0];
-const TRANSITION = "wipe";
+const TRANSITION = "fade";
 const TRANSITION_MS = 1000;
 
 /* loadingbar */
 const LOADER_ICON = "assets/moyashi-icon.png";
 const LOADER_ICON_SIZE = 20;
 const LOADER_TEXT = "loading…";
-const LOADER_MIN_MS = 4800;
+const LOADER_MIN_MS = 3800;
 
 /* assloadingbar */
 const LOADER_COLORS = ["#233765", "#f7f2f0"];
@@ -397,10 +400,14 @@ function startMusic(){
   playMusic();
 }
 function autoStartMusic(){
+ let musicHint = null;
+ const hideHint = () => { if (musicHint) { musicHint.remove(); musicHint = null; } };
+ function autoStartMusic(){
   if (!bgm || prefGet() === "off") return;
   bgm.play().then(()=>{ musicOn = true; bMusic.hidden = false; paintMusic(); fadeTo(MUSIC_VOLUME, 1500); }).catch(()=>{
-    const evs = ["pointerdown","keydown","touchstart"];
-    const once = () => { evs.forEach(ev => removeEventListener(ev, once, true)); if (!musicOn && prefGet() !== "off") { bMusic.hidden = false; playMusic(); } };
+    musicHint = h("div",{class:"hint"},"🔊 แตะที่ใดก็ได้เพื่อเปิดเสียงเพลง"); document.body.append(musicHint);
+    const evs = ["pointerup","click","keydown","touchend"];
+    const once = () => { evs.forEach(ev => removeEventListener(ev, once, true)); hideHint(); if (!musicOn && prefGet() !== "off") { bMusic.hidden = false; playMusic(); } };
     evs.forEach(ev => addEventListener(ev, once, true));
   });
 }
