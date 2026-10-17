@@ -24,7 +24,6 @@ h1{margin:0;font-size:clamp(28px,5vw,44px);font-weight:600;color:var(--gold);let
 header h1,header p{text-shadow:0 1px 8px rgba(5,5,24,.8)}
 header p{margin:4px 0 0;color:var(--mute);font-size:15px}
 #count{font-size:13px}
- #tagline{margin:0;font-size:clamp(15px,2.2vw,20px);color:var(--ink)}
 .star{position:fixed;top:0;left:0;z-index:2;padding:0;border:0;background:none;
  filter:drop-shadow(0 0 8px var(--gc,#e6f7ff));will-change:transform}
 .star svg,.star img{width:100%;height:100%;display:block;object-fit:contain}
@@ -176,11 +175,19 @@ body.pre #musicBox{opacity:0;pointer-events:none}
     margin:0;
   }
 }
+#splash > .txt.txt.txt{
+  position:absolute;
+  left:calc(40px + env(safe-area-inset-left));
+  top:50%;
+  transform:translateY(-50%);
+  max-width:min(28em,45vw);
+  margin:0;
+  text-align:left;
+}
 </style>
 </head>
 <body>
 <header>
-  <p id="tagline">คำโปรยยังคิดไม่ออกง่ะจะมีมั้ย</p>
   <p id="count"></p>
 </header>
 <div id="sky"></div>
@@ -214,7 +221,7 @@ const USE_IMG = STAR_IMAGES.length > 0;
 /* starttitle */
 const SPLASH_TITLE = "";
 const SPLASH_SUBTITLE = "";
-const SPLASH_TEXT = "";
+const SPLASH_TEXT = "คำโปรยยังคิดไม่ออกง่ะจะมีมั้ย";
 const SPLASH_IMAGE = "assets/seisenseki-logo.png";
 const START_LABEL = "START";
 
