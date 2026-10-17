@@ -527,6 +527,8 @@ function startSky(){
   }
   sp.append(lg);
 }
+   [SPLASH_TITLE && h("h1",{},SPLASH_TITLE), SPLASH_SUBTITLE && h("p",{class:"sub"},SPLASH_SUBTITLE), SPLASH_TEXT && h("p",{class:"txt"},SPLASH_TEXT)]
+    .filter(Boolean).forEach(el => { el.style.translate = off(SPLASH_TEXT_OFFSET); sp.append(el); });
 
   /* startbutt */
   const go = imgBtn(h("button",{class:"btn primary",type:"button"},START_LABEL),"start",START_LABEL);
