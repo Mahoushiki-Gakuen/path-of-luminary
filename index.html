@@ -276,7 +276,7 @@ const randShape = i => { const k = shapeKeys(); return k[(i ?? Math.floor(Math.r
 const SEED = [
  ["ขอให้พ่อแม่สุขภาพแข็งแรงตลอดไป","A"],["ขอให้สอบผ่านนะ สู้ ๆ","B"],["อยากให้แมวที่บ้านอยู่กับเรานานๆ","C"],
  ["ขอให้ปีหน้าได้เที่ยวทะเลบ่อยๆ","D"],["ขอบคุณทุกคนที่อยู่ข้างกันมาตลอด","E"]
-].map((x,i)=>({t:x[0],n:x[1],s:randShape(i),c:COLORS[i%6],at:i,seed:1}));
+].map((x,i)=>({t:x[0],n:x[1],s:randShape(i),c:STAR_COLOR,at:i,seed:1}));
 
 const FORTUNES = [
  {h:"โชคดีกำลังเดินทางมา",t:"สิ่งที่เคยติดขัดจะเริ่มคลี่คลายในไม่ช้า ลองเปิดใจรับโอกาสเล็กๆ ที่เข้ามา",c:"#e6f7ff"},
@@ -311,8 +311,7 @@ const store = {
   }
 };
 const clean = w => ({ t:String(w.t||"").slice(0,140), n:String(w.n||"").slice(0,20),
-  s:(USE_IMG?STAR_IMAGES.includes(w.s):SHAPES[w.s])?w.s:randShape(), c:COLORS.includes(w.c)?w.c:COLORS[0], at:+w.at||0 });
-
+  s:(USE_IMG?STAR_IMAGES.includes(w.s):SHAPES[w.s])?w.s:randShape(), c:STAR_COLOR, at:+w.at||0 });
  
 const $ = id => document.getElementById(id);
 const h = (tag, a={}, ...kids) => { const e=document.createElement(tag);
@@ -366,7 +365,7 @@ function openWrite(){
 
 const FORTUNE_RATE = .3;
 const makeFortune = () => ({ fortune:FORTUNES[Math.floor(Math.random()*FORTUNES.length)],
-  s:randShape(), c:COLORS[Math.floor(Math.random()*COLORS.length)] });
+  s:randShape(), c:STAR_COLOR });
 const pickItem = (free=pool) => (Math.random()<FORTUNE_RATE || !free.length) ? makeFortune() : free[Math.floor(Math.random()*free.length)];
 
 function showFortune(it){
