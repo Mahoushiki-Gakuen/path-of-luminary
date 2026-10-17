@@ -25,9 +25,9 @@ header h1,header p{text-shadow:0 1px 8px rgba(5,5,24,.8)}
 header p{margin:4px 0 0;color:var(--mute);font-size:15px}
 #count{font-size:13px}
 .star{position:fixed;top:0;left:0;z-index:2;padding:0;border:0;background:none;
- filter:drop-shadow(0 0 8px var(--gc,#ffd982));will-change:transform}
+ filter:drop-shadow(0 0 8px var(--gc,#e6f7ff));will-change:transform}
 .star svg,.star img{width:100%;height:100%;display:block}
-.star.mine{z-index:3;filter:drop-shadow(0 0 18px var(--gc,#ffd982))}
+.star.mine{z-index:3;filter:drop-shadow(0 0 18px var(--gc,#e6f7ff))}
 .star:hover{filter:drop-shadow(0 0 16px #fff)}
 nav{position:fixed;left:0;right:0;bottom:0;z-index:5;display:flex;gap:10px;justify-content:center;flex-wrap:wrap;
  padding:40px 14px calc(80px + env(safe-area-inset-bottom));background:linear-gradient(180deg,transparent,rgba(144,182,209,.30) 50%)}
@@ -53,9 +53,9 @@ small{color:var(--mute)}
 .opt[aria-pressed=true]{border-color:var(--gold);background:#244168}
 .sw{width:34px;height:34px;border-radius:50%;border:2px solid transparent;box-shadow:0 0 0 1.5px #4a4390}
 .sw[aria-pressed=true]{box-shadow:0 0 0 3px var(--gold)}
-.prev{width:84px;height:84px;margin:0 auto;filter:drop-shadow(0 0 14px var(--gc))}
+.prev{width:84px;height:84px;margin:0 auto;filter:drop-shadow(0 0 14px #e6f7ff)}
 .prev svg,.big svg,.li svg,.prev img,.big img,.opt img{width:100%;height:100%;display:block;object-fit:contain}
-.big{width:96px;height:96px;margin:6px auto 12px;filter:drop-shadow(0 0 16px var(--gc))}
+.big{width:96px;height:96px;margin:6px auto 12px;filter:drop-shadow(0 0 16px #e6f7ff)}
 .wish{font-size:20px;line-height:1.7;text-align:center;margin:0;overflow-wrap:anywhere}
 .by{text-align:center;color:var(--mute);margin-top:10px;font-size:14px}
 .go{width:100%;margin-top:18px}
@@ -261,7 +261,8 @@ const FAVICON = "assets/Mahoushiki_Logo.png";
 try { if (FAVICON) { const f = document.getElementById("fav"); f.removeAttribute("type"); f.href = FAVICON + (FAVICON.startsWith("data:") ? "" : "?v=2"); } } catch {}
 
 const COLORS = ["#ffd982","#ff9fb8","#9fd8ff","#b9a6ff","#a8f0c6","#ffb27a"];
-const COLOR_NAMES = ["ทอง","ชมพู","ฟ้า","ม่วง","เขียวมินต์","ส้ม"];
+const STAR_COLOR = "#e6f7ff";
+//const COLOR_NAMES = ["ทอง","ชมพู","ฟ้า","ม่วง","เขียวมินต์","ส้ม"];
 const poly = (n, r) => { const p=[]; for(let i=0;i<n*2;i++){const a=Math.PI*i/n-Math.PI/2,R=i%2?r*10:10;p.push((R*Math.cos(a)).toFixed(2)+","+(R*Math.sin(a)).toFixed(2))} return "M"+p.join("L")+"Z"; };
 const SHAPES = {
   star5:{n:"ดาวห้าแฉก", d:poly(5,.42)},
@@ -333,38 +334,32 @@ dlg.addEventListener("click", e => { if (e.target===dlg) dlg.close(); });
 const show = (...nodes) => { dlg.replaceChildren(imgBtn(h("button",{class:"x","aria-label":"ปิด",onclick:()=>dlg.close()},"×"),"close","ปิด"),...nodes); if(!dlg.open) dlg.showModal(); };
 
 function showWish(w){
-  show(starEl("big",w.s,w.c), h("p",{class:"wish"},w.t), h("p",{class:"by"}, w.n ? "จาก "+w.n : "จากผู้ไม่ประสงค์ออกนาม"));
+  show(starEl("big",w.s,w.c), h("p",{class:"wish"},w.t), h("p",{class:"by"}, w.n ? "จาก "+w.n : "จากดวงดาวนิรนาม"));
 }
 
 function openWrite(){
-  let shape=shapeKeys()[0], color=COLORS[0];
+  let shape=shapeKeys()[0], color=STAR_COLOR;
   const prev = h("div",{class:"prev"});
   const ta = h("textarea",{id:"ta",maxlength:"140",rows:"4",required:"",placeholder:"ลองอธิษฐานกับดวงดาวดูสิ บางทีความปรารถนานั้นอาจเป็นจริงก็ได้นะ?"});
   const cnt = h("small",{},"0/140");
   const nm = h("input",{id:"nm",maxlength:"20",placeholder:"สามารถเว้นว่างได้"});
   const shapeRow = h("div",{class:"row",role:"group","aria-label":"รูปดาว"});
-  const colorRow = h("div",{class:"row",role:"group","aria-label":"สีของดาว"});
   const paint = () => {
     prev.style.setProperty("--gc",color); prev.innerHTML=starSVG(shape,color);
     [...shapeRow.children].forEach(b=>{ b.setAttribute("aria-pressed",b.dataset.k===shape); b.innerHTML=starSVG(b.dataset.k,color); });
-    [...colorRow.children].forEach(b=>b.setAttribute("aria-pressed",b.dataset.k===color));
   };
   shapeKeys().forEach((k,i)=>{ const nmS = SHAPES[k] ? SHAPES[k].n : "ดาวแบบที่ "+(i+1);
     shapeRow.append(h("button",{type:"button",class:"opt","data-k":k,title:nmS,"aria-label":nmS,onclick:()=>{shape=k;paint();}})); });
-  COLORS.forEach((c,i)=>{ const b=h("button",{type:"button",class:"sw","data-k":c,title:COLOR_NAMES[i],"aria-label":COLOR_NAMES[i],onclick:()=>{color=c;paint();}}); b.style.background=c; colorRow.append(b); });
-  const colorWrap = h("div",{},h("div",{class:"lbl"},"เลือกสี"),colorRow);
-  if (USE_IMG) colorWrap.hidden = true;
   ta.oninput = () => cnt.textContent = ta.value.length+"/140";
   const form = h("form",{onsubmit:async e=>{
       e.preventDefault(); const t=ta.value.trim(); if(!t) return;
       const w = clean({t,n:nm.value.trim(),s:shape,c:color,at:Date.now()});
-      await store.save(w); pool.push(w); updateCount(); dlg.close(); spawn(w,{mine:true}); toast("ดวงดาวได้ตอบรับคำอธิษฐานแล้ว");
+      await store.save(w); pool.push(w); updateCount(); dlg.close(); spawn(w,{mine:true}); toast("ดวงดาวได้ตอบรับคำอธิษฐานของคุณแล้ว");
     }},
     h("h2",{},"เขียนคำอธิษฐาน"), prev,
     h("label",{for:"ta"},"คำอธิษฐาน"), ta, h("div",{style:"text-align:right"},cnt),
     h("label",{for:"nm"},"ชื่อตัวละคร"), nm,
-    h("div",{class:"lbl"},"เลือกรูปดาว"), shapeRow,
-    colorWrap,
+    h("div",{class:"lbl"},"เลือกรูปดาวอธิษฐาน"), shapeRow,
     imgBtn(h("button",{class:"btn primary go",type:"submit"},"อธิษฐาน"),"submit","อธิษฐาน"));
   paint(); show(form); ta.focus();
 }
@@ -379,16 +374,14 @@ function showFortune(it){
   body.replaceChildren(starEl("big"+(reduce?"":" spin"),it.s,it.c));
   show(body);
   setTimeout(()=>{
-    body.replaceChildren(starEl("big",it.s,it.c), h("p",{class:"fh"},f.h), h("p",{class:"wish",style:"font-size:17px"},f.t),
-      h("div",{class:"facts"},h("span",{},"เลขนำโชค "+f.n),h("span",{},"สีมงคล "+f.c)));
-  }, reduce?0:1000);
+  body.replaceChildren(starEl("big",it.s,it.c), h("p",{class:"fh"},f.h), h("p",{class:"wish",style:"font-size:17px"},f.t));}, reduce?0:1000);
 }
 const showItem = it => it.fortune ? showFortune(it) : showWish(it);
 
 let pool = [...SEED];
 const active = new Set();
 const maxActive = () => innerWidth<600 ? 9 : 16;
-const updateCount = () => { const c=$("count"); if (c) c.textContent = `คำอธิษฐานทั้งหมดตอนนี้ ${pool.length} ดวง`; };
+const updateCount = () => { const c=$("count"); if (c) c.textContent = `ดวงดาวอธิษฐานทั้งหมดตอนนี้ ${pool.length} ดวง`; };
 
 function spawn(w, {mine=false, progress=0}={}){
   const size = mine ? 72 : 30+Math.random()*28;
@@ -435,7 +428,7 @@ for (let i=0;i<70;i++){
   document.body.prepend(d);
 }
 
-$("bWrite").onclick=openWrite; imgBtn($("bWrite"),"write","เขียนคำอธิษฐาน");
+$("bWrite").onclick=openWrite; imgBtn($("bWrite"),"write","ลองอธิษฐานดูสิ");
 
 /* music */
 const bMusic = h("button",{id:"bMusic",type:"button","aria-label":"เปิด/ปิดเพลง"});
@@ -487,7 +480,7 @@ const hideHint = () => { if (musicHint) { musicHint.remove(); musicHint = null; 
 function autoStartMusic(){
   if (!bgm || prefGet() === "off") return;
   bgm.play().then(()=>{ musicOn = true; musicBox.hidden = false; paintMusic(); fadeTo(vol, 1500); }).catch(()=>{
-    musicOn = false; paintMusic();   // <-- เพิ่มบรรทัดนี้
+    musicOn = false; paintMusic();
     const evs = ["touchend","click","keydown"];
     const once = () => { evs.forEach(ev => removeEventListener(ev, once, true)); hideHint(); if (bgm.paused && prefGet() !== "off") { musicBox.hidden = false; playMusic(); } };
     evs.forEach(ev => addEventListener(ev, once, true));
