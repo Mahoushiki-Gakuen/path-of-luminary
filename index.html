@@ -144,10 +144,12 @@ body.pre #musicBox{opacity:0;pointer-events:none}
   #bgvid{position:fixed;inset:0;width:100%;height:100%;object-fit:cover;z-index:-2;pointer-events:none}
   #bgdim{position:fixed;inset:0;z-index:-1;pointer-events:none}
 @media (prefers-reduced-motion:reduce){#bgvid{display:none}}
-#splash .svid{position:absolute;inset:0;width:100%;height:100%;max-height:none;object-fit:cover;z-index:-2;pointer-events:none}
-#splash .sdim{position:absolute;inset:0;z-index:-1;pointer-events:none}
 #splash{isolation:isolate}
-#splash .txt,#splash h1,#splash .sub,#splash img,#splash .loader,#splash .btn{position:relative;z-index:1}
+#splash .svid{position:absolute;inset:0;width:100%;height:100%;max-height:none;object-fit:cover;z-index:0;pointer-events:none}
+#splash .sdim{position:absolute;inset:0;z-index:0;pointer-events:none}
+#splash > *:not(.svid):not(.sdim){position:relative;z-index:1}
+#splash > img{position:absolute}
+#splash .txt{color:var(--ink);text-shadow:0 1px 8px rgba(5,5,24,.9)}
 @media (prefers-reduced-motion:reduce){#splash .svid{display:none}}
 </style>
 </head>
@@ -176,7 +178,7 @@ addEventListener("error", e => {
 const DB_URL = "https://msg-path-of-luminary-default-rtdb.asia-southeast1.firebasedatabase.app";
 const DB_BASE = DB_URL.trim().replace(/\/wishes\.json.*$/,"").replace(/\/+$/,"");
 
-const BACKGROUND_IMAGE = "assets/bgsea-beta.gif";
+const BACKGROUND_IMAGE = "assets/lobby.gif";
 const BACKGROUND_VIDEO = "";
 const BACKGROUND_VIDEO_POSTER = "";
 const BACKGROUND_DIM = 0.3;
