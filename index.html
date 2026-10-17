@@ -445,12 +445,15 @@ function fadeTo(v, ms, done){
   fadeT = setInterval(()=>{ const k = Math.min(1,(performance.now()-t0)/ms); bgm.volume = from + (v-from)*k; if (k>=1){ clearInterval(fadeT); done && done(); } }, 50);
 }
 function playMusic(){
-  bgm.play().then(()=>{ musicOn = true; paintMusic(); fadeTo(vol, 1500); }).catch(()=>{ musicOn = false; paintMusic(); });
+  bgm.play().then(()=>{ musicOn = true; paintMusic(); fadeTo(vol, 1500); }).catch(e=>{
+    musicOn = false; paintMusic();
+    if (e && e.name !== "NotAllowedError") toast("เล่นเพลงไม่ได้: " + (e.name || e));
+  });
 }
 function startMusic(){
   if (!bgm) return;
   musicBox.hidden = false;
-  if (musicOn) return;
+  if (!bgm.paused) return;
   if (prefGet() === "off") { musicOn = false; paintMusic(); return; }
   playMusic();
 }
@@ -461,7 +464,7 @@ function autoStartMusic(){
   bgm.play().then(()=>{ musicOn = true; musicBox.hidden = false; paintMusic(); fadeTo(vol, 1500); }).catch(()=>{
     musicOn = false; paintMusic();   // <-- เพิ่มบรรทัดนี้
     const evs = ["touchend","click","keydown"];
-    const once = () => { evs.forEach(ev => removeEventListener(ev, once, true)); hideHint(); if (!musicOn && prefGet() !== "off") { musicBox.hidden = false; playMusic(); } };
+    const once = () => { evs.forEach(ev => removeEventListener(ev, once, true)); hideHint(); if (bgm.paused && prefGet() !== "off") { musicBox.hidden = false; playMusic(); } };
     evs.forEach(ev => addEventListener(ev, once, true));
   });
 }
