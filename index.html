@@ -184,8 +184,9 @@ const BUTTON_IMAGES = { write:"", start:"", submit:"", close:"", music:"", music
 const SPLASH_BACKGROUND = "";
 const SPLASH_ALIGN = "bottom";
 
-const SPLASH_LOGO_SIZE = 440;
-const SPLASH_LOGO_OFFSET = [-600, -400];
+const SPLASH_LOGO_CORNER = true;
+const SPLASH_LOGO_SIZE = 340;
+const SPLASH_LOGO_OFFSET = [0, 0];
 const SPLASH_TEXT_OFFSET = [0, 0];
 const SPLASH_BUTTON_OFFSET = [0, 0];
 const TRANSITION = "flash";
@@ -476,13 +477,21 @@ function startSky(){
     `linear-gradient(rgba(14,26,59,.2),rgba(14,26,59,.5)), url("${encodeURI(SPLASH_BACKGROUND).replace(/"/g,"%22")}") center/cover no-repeat`;
   sp.style.justifyContent = ({top:"flex-start",bottom:"flex-end"})[SPLASH_ALIGN] || "center";
   const off = v => Array.isArray(v) ? v.map(n => typeof n === "number" ? n+"px" : n).join(" ") : "";
-  if (SPLASH_IMAGE) {
-    const lg = h("img",{src:SPLASH_IMAGE,alt:""});
+ if (SPLASH_IMAGE) {
+  const lg = h("img",{src:SPLASH_IMAGE,alt:""});
+  if (SPLASH_LOGO_CORNER) {
+    Object.assign(lg.style, {
+      position: "absolute",
+      top: "calc(20px + env(safe-area-inset-top))",
+      left: "calc(20px + env(safe-area-inset-left))",
+      width: `min(40vw, ${SPLASH_LOGO_SIZE}px)`,
+      maxHeight: "25vh"
+    });
+  } else {
     lg.style.width = `min(80vw, ${SPLASH_LOGO_SIZE}px)`; lg.style.maxHeight = "60vh"; lg.style.translate = off(SPLASH_LOGO_OFFSET);
-    sp.append(lg);
   }
-  [SPLASH_TITLE && h("h1",{},SPLASH_TITLE), SPLASH_SUBTITLE && h("p",{class:"sub"},SPLASH_SUBTITLE), SPLASH_TEXT && h("p",{class:"txt"},SPLASH_TEXT)]
-    .filter(Boolean).forEach(el => { el.style.translate = off(SPLASH_TEXT_OFFSET); sp.append(el); });
+  sp.append(lg);
+}
 
   /* startbutt */
   const go = imgBtn(h("button",{class:"btn primary",type:"button"},START_LABEL),"start",START_LABEL);
