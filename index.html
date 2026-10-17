@@ -178,7 +178,7 @@ const SPLASH_IMAGE = "assets/seisenseki-logo.png";
 const START_LABEL = "START";
 
 /* imgbutt */
-const BUTTON_IMAGES = { write:"", start:"", submit:"", close:"", music:"", musicOff:"" };
+const BUTTON_IMAGES = { write:"", start:"", submit:"", close:"", music:"", musicOn:"" };
 
 /* Title */
 const SPLASH_BACKGROUND = "";
@@ -389,7 +389,7 @@ const bMusic = h("button",{id:"bMusic",type:"button","aria-label":"เปิด/
 const volIn = h("input",{id:"vol",type:"range",min:"0",max:"100",step:"1","aria-label":"ระดับเสียงเพลง"});
 const volPanel = h("div",{id:"volPanel",hidden:"",role:"group","aria-label":"ตั้งค่าเสียง"},volIn);
 const musicBox = h("div",{id:"musicBox",hidden:""},bMusic,volPanel);
-let bgm = null, musicOn = false, fadeT;
+let bgm = null, musicOn = true, fadeT;
 const ICON_ON = '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 9v6h4l5 4V5L7 9H3z" fill="currentColor"/><path d="M15.5 8.5a5 5 0 0 1 0 7M18 6a8.5 8.5 0 0 1 0 12" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>';
 const ICON_OFF = '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 9v6h4l5 4V5L7 9H3z" fill="currentColor"/><path d="M16 9l5 6M21 9l-5 6" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>';
 const prefGet = () => { try { return localStorage.getItem("loydao_music"); } catch { return null; } };
