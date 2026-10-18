@@ -198,6 +198,17 @@ body.pre #musicBox{opacity:0;pointer-events:none}
 @media not all and (min-width:900px) and (hover:hover) and (pointer:fine){
   #splash > .sbtn.sbtn.sbtn{position:absolute;left:0;right:0;bottom:calc(40px + env(safe-area-inset-bottom));margin:0 auto;width:max-content}
 }
+@media (max-width:899px){
+  #splash > .txt.txt.txt{
+    position:absolute;
+    left:calc(20px + env(safe-area-inset-left));
+    top:50%;
+    transform:translateY(-50%);
+    max-width:min(28em, calc(100vw - 40px));
+    margin:0;
+    text-align:left;
+  }
+}
 </style>
 </head>
 <body>
@@ -251,6 +262,9 @@ const START_LAYERS = [
 const START_BUTTON_HEIGHT = 280;
 const START_HOVER_SCALE = 1.2;
 const START_HOVER_MS = 350;
+const BUTTON_IMAGES = { write:"", start:"", submit:"", close:"",
+  music:"assets/soundON-button.png",
+  musicOff:"assets/soundOFF-button.png };
 
 /* Title */
 const SPLASH_BACKGROUND = "";
@@ -258,9 +272,9 @@ const SPLASH_BG_COLOR = "#F7F7F7";
 const SPLASH_VIDEO = "";
 const SPLASH_VIDEO_DIM = 0;
 const SPLASH_LAYERS = [
-  { src:"assets/backgroundelement-title.png", z:0, fit:"cover", fitMobile:"cover", pos:"center" },
-  { src:"assets/backgroundbox-title.png",     z:0, fit:"cover", fitMobile:"cover", pos:"center", fade:true, dur:1400, delay:200 },
-  { src:"assets/Frontdrop-title.png",         z:2, fit:"cover", fitMobile:"cover", pos:"center" }
+  { src:"assets/backgroundelement-title.png", z:0, fit:"cover", fitMobile:"contain", pos:"center" },
+  { src:"assets/backgroundbox-title.png",     z:0, fit:"cover", fitMobile:"contain", pos:"center", fade:true, dur:1400, delay:200 },
+  { src:"assets/Frontdrop-title.png",         z:2, fit:"cover", fitMobile:"contain", pos:"center" }
 ];
 const SPLASH_ALIGN = "bottom";
 
@@ -300,7 +314,6 @@ try { if (FAVICON) { const f = document.getElementById("fav"); f.removeAttribute
 
 const COLORS = ["#e6f7ff"];
 const STAR_COLOR = "#e6f7ff";
-//const COLOR_NAMES = ["ทอง","ชมพู","ฟ้า","ม่วง","เขียวมินต์","ส้ม"];
 const poly = (n, r) => { const p=[]; for(let i=0;i<n*2;i++){const a=Math.PI*i/n-Math.PI/2,R=i%2?r*10:10;p.push((R*Math.cos(a)).toFixed(2)+","+(R*Math.sin(a)).toFixed(2))} return "M"+p.join("L")+"Z"; };
 const SHAPES = {
   star5:{n:"ดาวห้าแฉก", d:poly(5,.42)},
@@ -666,7 +679,6 @@ requestAnimationFrame(()=>requestAnimationFrame(()=>fadeEls.forEach(el=>el.class
   if (LOADER_TRACK_IMAGE) { bar.classList.add("img"); setV("--ltrack", q(LOADER_TRACK_IMAGE)); }
   if (LOADER_FILL_IMAGE) { fill.style.backgroundImage = q(LOADER_FILL_IMAGE); fill.style.backgroundRepeat = "no-repeat"; fill.style.backgroundPosition = "left center"; }
   sp.append(loader); document.body.classList.add("pre"); document.body.append(sp);
-  /* loader กับปุ่ม START ลอยทับที่ขอบล่าง ไม่กินพื้นที่ใน flow ข้อความโปรยจึงไม่ถูกดันตอนสลับ */
   { const lh = loader.offsetHeight;
     sp.style.paddingBottom = `calc(40px + env(safe-area-inset-bottom) + ${lh+32}px)`;
     Object.assign(loader.style,{position:"absolute",left:"0",right:"0",margin:"0 auto",bottom:"calc(40px + env(safe-area-inset-bottom))"}); }
