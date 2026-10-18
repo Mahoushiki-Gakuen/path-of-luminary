@@ -49,11 +49,13 @@ dialog{
   background:url("assets/wish-form.png") center/100% 100% no-repeat;
   background-color:transparent;
   aspect-ratio:437 / 537;
-  width:min(94vw,500px,calc(88vh * 437 / 537));
+  width:min(94vw,510px,calc(88vh * 437 / 537));
   max-height:88vh;
   padding:40px 34px;
   overflow:auto;
+  border:0;
   outline:none;
+  box-shadow:none;
 }
 dialog::backdrop{background:rgba(5,5,24,.72)}
 dialog h2{margin:0 0 12px;font-size:22px;color:#e8f7ff;font-weight:600}
@@ -236,6 +238,10 @@ body.pre #musicBox{opacity:0;pointer-events:none}
   filter:brightness(1.1) drop-shadow(0 4px 6px rgba(0,0,0,.35));
 }
 .go:not(.imgbtn):active{transform:translateY(2px)}
+dialog:focus,
+dialog:focus-visible{
+  outline:none;
+}
 </style>
 </head>
 <body>
