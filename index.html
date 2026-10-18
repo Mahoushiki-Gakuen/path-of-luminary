@@ -251,7 +251,6 @@ const SPLASH_IMAGE = "assets/seisenseki-logo.png";
 const START_LABEL = "START";
 
 /* imgbutt */
-const BUTTON_IMAGES = { write:"", start:"", submit:"", close:"", music:"", musicOff:"" };
 const START_LAYERS = [
   { src:"assets/start-button-backdrop.png" },
   { src:"assets/start-button-dropshadow.png", x:-4, y:1,rotate:-60, scale:1.1 },
@@ -264,7 +263,7 @@ const START_HOVER_SCALE = 1.2;
 const START_HOVER_MS = 350;
 const BUTTON_IMAGES = { write:"", start:"", submit:"", close:"",
   music:"assets/soundON-button.png",
-  musicOff:"assets/soundOFF-button.png };
+  musicOff:"assets/soundOFF-button.png" };
 
 /* Title */
 const SPLASH_BACKGROUND = "";
@@ -314,14 +313,7 @@ try { if (FAVICON) { const f = document.getElementById("fav"); f.removeAttribute
 
 const COLORS = ["#e6f7ff"];
 const STAR_COLOR = "#e6f7ff";
-const poly = (n, r) => { const p=[]; for(let i=0;i<n*2;i++){const a=Math.PI*i/n-Math.PI/2,R=i%2?r*10:10;p.push((R*Math.cos(a)).toFixed(2)+","+(R*Math.sin(a)).toFixed(2))} return "M"+p.join("L")+"Z"; };
-const SHAPES = {
-  star5:{n:"ดาวห้าแฉก", d:poly(5,.42)},
-  sparkle:{n:"ประกายสี่แฉก", d:poly(4,.2)},
-  star6:{n:"ดาวหกแฉก", d:poly(6,.58)},
-  star8:{n:"ดาวแปดแฉก", d:poly(8,.62)},
-  heart:{n:"ดาวหัวใจ", d:"M0 9.5C-7-4-9-6-9-8.5-9-12 0-13 0-6 0-13 9-12 9-8.5 9-6 7-4 0 9.5Z", t:"translate(0,3) scale(.9)"}
-};
+const SHAPES = {};
 const shapeKeys = () => USE_IMG ? STAR_IMAGES : Object.keys(SHAPES);
 const randShape = i => { const k = shapeKeys(); return k[(i ?? Math.floor(Math.random()*k.length)) % k.length]; };
 const SEED = [
