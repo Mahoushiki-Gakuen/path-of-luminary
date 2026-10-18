@@ -209,6 +209,8 @@ body.pre #musicBox{opacity:0;pointer-events:none}
     text-align:left;
   }
 }
+#bWrite.imgbtn,#bWrite.imgbtn:hover,#bWrite.imgbtn:active{background:none;box-shadow:none}
+ .imgbtn img{display:block;height:56px;width:auto;max-width:100%;pointer-events:none}
 </style>
 </head>
 <body>
@@ -261,7 +263,7 @@ const START_LAYERS = [
 const START_BUTTON_HEIGHT = 280;
 const START_HOVER_SCALE = 1.2;
 const START_HOVER_MS = 350;
-const BUTTON_IMAGES = { write:"", start:"", submit:"", close:"",
+const BUTTON_IMAGES = { write:"assets/wish-button.png", start:"", submit:"", close:"",
   music:"assets/soundON-button.png",
   musicOff:"assets/soundOFF-button.png" };
 
