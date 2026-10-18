@@ -255,9 +255,9 @@ const SPLASH_BG_COLOR = "#F7F7F7";
 const SPLASH_VIDEO = "";
 const SPLASH_VIDEO_DIM = 0;
 const SPLASH_LAYERS = [
-  { src:"assets/backgroundelement-title.png", z:0, fit:"cover", pos:"center" },
-  { src:"assets/backgroundbox-title.png",     z:0, fit:"cover", pos:"center", fade:true, dur:1400, delay:200 },
-  { src:"assets/Frontdrop-title.png",         z:2, fit:"cover", pos:"center" }
+  { src:"assets/backgroundelement-title.png", z:0, fit:"cover", fitMobile:"contain", pos:"center" },
+  { src:"assets/backgroundbox-title.png",     z:0, fit:"cover", fitMobile:"contain", pos:"center", fade:true, dur:1400, delay:200 },
+  { src:"assets/Frontdrop-title.png",         z:2, fit:"cover", fitMobile:"contain", pos:"center" }
 ];
 const SPLASH_ALIGN = "bottom";
 
@@ -576,6 +576,9 @@ SPLASH_LAYERS.forEach(L => {
     objectFit:L.fit||"cover", objectPosition:L.pos||"center",
     pointerEvents:"none", zIndex:String(L.z ?? 0)
   });
+  const fitMQ = matchMedia("(max-aspect-ratio: 1/1), (max-width: 900px)");
+  const applyFit = () => { im.style.objectFit = fitMQ.matches ? (L.fitMobile||L.fit||"cover") : (L.fit||"cover"); };
+  applyFit(); fitMQ.addEventListener("change", applyFit);
   if (L.fade) {
     im.classList.add("slfade");
     im.style.setProperty("--fd",  (L.dur   ?? 1200)+"ms");
@@ -609,7 +612,7 @@ requestAnimationFrame(()=>requestAnimationFrame(()=>fadeEls.forEach(el=>el.class
     ? (() => {
         const b = h("button",{class:"sbtn",type:"button","aria-label":START_LABEL});
         const stack = h("span",{class:"sstack"});
-        stack.style.setProperty("--sh", START_BUTTON_HEIGHT+"px");
+        stack.style.setProperty("--sh", `min(${START_BUTTON_HEIGHT}px, 28vh)`);
         stack.style.setProperty("--ssc", START_HOVER_SCALE);
         stack.style.setProperty("--sms", START_HOVER_MS+"ms");
         START_LAYERS.forEach(L => {
