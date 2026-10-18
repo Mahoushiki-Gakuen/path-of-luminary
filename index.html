@@ -141,6 +141,7 @@ body.pre #musicBox{opacity:0;pointer-events:none}
 #splash .sub{margin:0;font-size:clamp(18px,4.5vw,26px);color:var(--ink)}
 #splash .txt{margin:0;max-width:30em;color:var(--mute);line-height:1.7}
 #splash .btn{margin-top:14px;padding:13px 44px;font-size:19px}
+#splash img.slayer{max-height:none;height:auto}
 .hint{position:fixed;left:50%;top:calc(16px + env(safe-area-inset-top));transform:translateX(-50%);z-index:55;pointer-events:none;white-space:nowrap;
  background:rgba(23,20,70,.85);border:1.5px solid rgba(255,217,130,.55);padding:8px 16px;border-radius:999px;font-size:14px;color:var(--ink);animation:hint 1.6s ease-in-out infinite alternate}
 @keyframes hint{from{opacity:.55}to{opacity:1}}
@@ -192,6 +193,16 @@ body.pre #musicBox{opacity:0;pointer-events:none}
 }
 #splash .txt{white-space:pre-line}
 @media (max-width:600px){ #splash .txt{font-size:13px} }
+.slayer{position:absolute;pointer-events:none;z-index:0;opacity:0;
+ animation:slfade var(--fd,1200ms) ease-out var(--fdl,0ms) forwards}
+@keyframes slfade{
+  from{opacity:0;transform:translate(var(--fx,0px),var(--fy,0px)) scale(var(--fs,1))}
+  to{opacity:var(--fo,1);transform:none}
+}
+@media (prefers-reduced-motion:reduce){.slayer{animation:none;opacity:var(--fo,1)}}
+.slfade{opacity:0;transition:opacity var(--fd,1200ms) ease-out var(--fdl,0ms)}
+.slfade.in{opacity:1}
+@media (prefers-reduced-motion:reduce){.slfade{transition:none}}
 </style>
 </head>
 <body>
@@ -247,9 +258,13 @@ const START_HOVER_SCALE = 1.2;
 const START_HOVER_MS = 350;
 
 /* Title */
-const SPLASH_BACKGROUND = "assets/background-title3.png";
-const SPLASH_VIDEO = "";
-const SPLASH_VIDEO_DIM = 0;
+const SPLASH_BACKGROUND = "";
+const SPLASH_BG_COLOR = "#F7F7F7";
+const SPLASH_LAYERS = [
+  { src:"assets/backgroundelement-title.png", z:0, fit:"cover", pos:"center" },
+  { src:"assets/backgroundbox-title.png",     z:0, fit:"cover", pos:"center", fade:true, dur:1400, delay:200 },
+  { src:"assets/Frontdrop-title.png",         z:2, fit:"cover", pos:"center" }
+];
 const SPLASH_ALIGN = "bottom";
 
 const SPLASH_LOGO_CORNER = true;
@@ -547,7 +562,8 @@ function startSky(){
   const sp = h("div",{id:"splash",role:"region","aria-label":"หน้าเริ่มต้น","data-t":type});
   sp.style.setProperty("--tm", ms+"ms");
       if (SPLASH_BACKGROUND) sp.style.background =
-    `url("${encodeURI(SPLASH_BACKGROUND).replace(/"/g,"%22")}") center/cover no-repeat`;
+    `url("${encodeURI(SPLASH_BACKGROUND).replace(/"/g,"%22")}") center/cover no-repeat ${SPLASH_BG_COLOR}`;
+else sp.style.background = SPLASH_BG_COLOR;
    sp.style.justifyContent = ({top:"flex-start",bottom:"flex-end"})[SPLASH_ALIGN] || "center";
  if (SPLASH_VIDEO && !reduce) {
   const sv = h("video",{class:"svid",autoplay:"",muted:"",loop:"",playsinline:"",preload:"auto","aria-hidden":"true"});
@@ -557,6 +573,35 @@ function startSky(){
   sp.append(sv, sd);
   sv.play().catch(()=>{});
 }
+ SPLASH_LAYERS.forEach(L => {
+  const im = h("img",{class:"slayer",src:L.src,alt:"",draggable:"false"});
+  Object.assign(im.style, L.pos || {});
+  im.style.width = L.w || "auto";
+  im.style.setProperty("--fd",  (L.dur   ?? 1200)+"ms");
+  im.style.setProperty("--fdl", (L.delay ?? 0)+"ms");
+  im.style.setProperty("--fo",  L.opacity ?? 1);
+  im.style.setProperty("--fx",  (L.from?.[0] ?? 0)+"px");
+  im.style.setProperty("--fy",  (L.from?.[1] ?? 0)+"px");
+  im.style.setProperty("--fs",  L.scale ?? 1);
+  sp.append(im);
+});
+ const fadeEls = [];
+SPLASH_LAYERS.forEach(L => {
+  const im = h("img",{src:L.src,alt:"",draggable:"false"});
+  Object.assign(im.style,{
+    position:"absolute", inset:"0", width:"100%", height:"100%",
+    maxWidth:"none", maxHeight:"none",
+    objectFit:L.fit||"cover", objectPosition:L.pos||"center",
+    pointerEvents:"none", zIndex:String(L.z ?? 0)
+  });
+  if (L.fade) {
+    im.classList.add("slfade");
+    im.style.setProperty("--fd",  (L.dur   ?? 1200)+"ms");
+    im.style.setProperty("--fdl", (L.delay ?? 0)+"ms");
+    fadeEls.push(im);
+  }
+  sp.append(im);
+});
   const off = v => Array.isArray(v) ? v.map(n => typeof n === "number" ? n+"px" : n).join(" ") : "";
  if (SPLASH_IMAGE) {
   const lg = h("img",{src:SPLASH_IMAGE,alt:""});
@@ -634,17 +679,18 @@ function startSky(){
   sp.append(loader); document.body.classList.add("pre"); document.body.append(sp);
 
   /* loading per */
-  const urls = [...new Set([BACKGROUND_IMAGE,SPLASH_BACKGROUND,SPLASH_IMAGE,LOADER_ICON,LOADER_TRACK_IMAGE,LOADER_FILL_IMAGE,...START_LAYERS.map(l=>l.src),...STAR_IMAGES,...Object.values(BUTTON_IMAGES)].filter(Boolean))];
+  const urls = [...new Set([BACKGROUND_IMAGE,SPLASH_BACKGROUND,SPLASH_IMAGE,LOADER_ICON,LOADER_TRACK_IMAGE,LOADER_FILL_IMAGE,...SPLASH_LAYERS.map(l=>l.src),...START_LAYERS.map(l=>l.src),...STAR_IMAGES,...Object.values(BUTTON_IMAGES)].filter(Boolean))];
   const tasks = [...urls.map(preload), withTimeout(document.fonts ? document.fonts.ready : Promise.resolve(), 10000), dataReady];
   let done = 0; tasks.forEach(p => p.then(()=>{ done++; }));
   const t0 = performance.now(), minMs = reduce ? 500 : Math.max(0, LOADER_MIN_MS);
   let shown = 0, finished = false;
 
   const finish = () => {
-    if (finished) return; finished = true;
-    startSky(); loader.classList.add("done");
-    setTimeout(()=>{ loader.remove(); go.classList.add("pop"); sp.append(go); go.focus(); }, 500);
-  };
+  if (finished) return; finished = true;
+  fadeEls.forEach(el => el.classList.add("in"));
+  startSky(); loader.classList.add("done");
+  setTimeout(()=>{ loader.remove(); go.classList.add("pop"); sp.append(go); go.focus(); }, 500);
+};
   const tick = () => {
     const real = done / tasks.length;
     const tp = minMs ? Math.min(1, (performance.now()-t0)/minMs) : 1;
