@@ -195,6 +195,9 @@ body.pre #musicBox{opacity:0;pointer-events:none}
 .slfade{opacity:0;transition:opacity var(--fd,1200ms) ease-out var(--fdl,0ms)}
 .slfade.in{opacity:1}
 @media (prefers-reduced-motion:reduce){.slfade{transition:none}}
+@media not all and (min-width:900px) and (hover:hover) and (pointer:fine){
+  #splash > .sbtn.sbtn.sbtn{position:absolute;left:0;right:0;bottom:calc(40px + env(safe-area-inset-bottom));margin:0 auto;width:max-content}
+}
 </style>
 </head>
 <body>
@@ -663,6 +666,10 @@ requestAnimationFrame(()=>requestAnimationFrame(()=>fadeEls.forEach(el=>el.class
   if (LOADER_TRACK_IMAGE) { bar.classList.add("img"); setV("--ltrack", q(LOADER_TRACK_IMAGE)); }
   if (LOADER_FILL_IMAGE) { fill.style.backgroundImage = q(LOADER_FILL_IMAGE); fill.style.backgroundRepeat = "no-repeat"; fill.style.backgroundPosition = "left center"; }
   sp.append(loader); document.body.classList.add("pre"); document.body.append(sp);
+  /* loader กับปุ่ม START ลอยทับที่ขอบล่าง ไม่กินพื้นที่ใน flow ข้อความโปรยจึงไม่ถูกดันตอนสลับ */
+  { const lh = loader.offsetHeight;
+    sp.style.paddingBottom = `calc(40px + env(safe-area-inset-bottom) + ${lh+32}px)`;
+    Object.assign(loader.style,{position:"absolute",left:"0",right:"0",margin:"0 auto",bottom:"calc(40px + env(safe-area-inset-bottom))"}); }
 
   /* loading per */
   const urls = [...new Set([BACKGROUND_IMAGE,SPLASH_BACKGROUND,SPLASH_IMAGE,LOADER_ICON,LOADER_TRACK_IMAGE,LOADER_FILL_IMAGE,...SPLASH_LAYERS.map(l=>l.src),...START_LAYERS.map(l=>l.src),...STAR_IMAGES,...Object.values(BUTTON_IMAGES)].filter(Boolean))];
