@@ -304,9 +304,9 @@ const SPLASH_BG_COLOR = "#F7F7F7";
 const SPLASH_VIDEO = "";
 const SPLASH_VIDEO_DIM = 0;
 const SPLASH_LAYERS = [
-  { src:"assets/backgroundelement-title.png", z:0, fit:"cover", fitMobile:"contain", pos:"center" },
-  { src:"assets/backgroundbox-title.png",     z:0, fit:"cover", fitMobile:"fill", pos:"center", fade:true, dur:1400, delay:200 },
-  { src:"assets/Frontdrop-title.png",         z:0, fit:"cover", fitMobile:"contain", pos:"center" }
+  { src:"assets/backgroundelement-title.png", z:0, fit:"cover", fitMobile:"cover", pos:"center", out:true },
+  { src:"assets/backgroundbox-title.png",     z:0, fit:"cover", fitMobile:"cover", pos:"center", fade:true, dur:1400, delay:200 },
+  { src:"assets/Frontdrop-title.png",         z:0, fit:"cover", fitMobile:"cover", pos:"center" }
 ];
 const SPLASH_ALIGN = "bottom";
 
@@ -610,12 +610,13 @@ else sp.style.background = SPLASH_BG_COLOR;
 }
  const fadeEls = [];
 const layerBox = h("div");
-Object.assign(layerBox.style,{position:"absolute",inset:"0",display:"grid",gridTemplate:"100% / 100%",pointerEvents:"none",zIndex:"auto"});
+Object.assign(layerBox.style,{position:"absolute",inset:"0",display:"grid",gridTemplate:"minmax(0,1fr) / minmax(0,1fr)",pointerEvents:"none",zIndex:"auto"});
 sp.append(layerBox);
 SPLASH_LAYERS.forEach(L => {
   const im = h("img",{src:L.src,alt:"",draggable:"false"});
   Object.assign(im.style,{
-    position:"relative", gridArea:"1 / 1", width:"100%", height:"100%", padding:L.pad||"0",
+    position:L.out?"absolute":"relative", gridArea:"1 / 1", inset:"0", width:"100%", height:"100%", padding:L.pad||"0",
+    minWidth:"0", minHeight:"0",
     maxWidth:"none", maxHeight:"none",
     objectFit:L.fit||"cover", objectPosition:L.pos||"center",
     pointerEvents:"none", zIndex:String(L.z ?? 0)
@@ -629,7 +630,7 @@ SPLASH_LAYERS.forEach(L => {
     im.style.setProperty("--fdl", (L.delay ?? 0)+"ms");
     fadeEls.push(im);
   }
-  layerBox.append(im);
+  if (L.out) sp.insertBefore(im, layerBox); else layerBox.append(im);
 });
 requestAnimationFrame(()=>requestAnimationFrame(()=>fadeEls.forEach(el=>el.classList.add("in"))));
   const off = v => Array.isArray(v) ? v.map(n => typeof n === "number" ? n+"px" : n).join(" ") : "";
