@@ -4,7 +4,6 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <title>MSG — น่านฟ้าทะเลดาว</title>
-<link id="fav" rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%2290%22 font-size=%2290%22>⭐</text></svg>">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Bai+Jamjuree:wght@400;600;700&display=swap" rel="stylesheet">
@@ -351,7 +350,7 @@ const MUSIC_AUTOPLAY = true;
 
  
 const FAVICON = "assets/Mahoushiki_Logo.png";
-try { if (FAVICON) { const f = document.getElementById("fav"); f.removeAttribute("type"); f.href = FAVICON + (FAVICON.startsWith("data:") ? "" : "?v=2"); } } catch {}
+try { if (FAVICON) { let f = document.getElementById("fav"); if (!f) { f = document.createElement("link"); f.id = "fav"; f.rel = "icon"; document.head.appendChild(f); } f.removeAttribute("type"); f.href = FAVICON + (FAVICON.startsWith("data:") ? "" : "?v=2"); } } catch {}
 
 const COLORS = ["#e6f7ff"];
 const STAR_COLOR = "#e6f7ff";
