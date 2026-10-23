@@ -70,6 +70,9 @@ dialog.result .fh{font-size:18px;margin:0 0 4px}
 dialog.result .wish[style]{font-size:14px !important}
 dialog h2{margin:0 0 12px;font-size:22px;color:#e8f7ff;font-weight:600}
 .x{position:absolute;top:18px;right:29px;border:0;background:none;font-size:26px;color:var(--mute);line-height:1}
+.dl{position:absolute;top:18px;left:29px;width:30px;height:30px;padding:0;border:0;background:none;color:var(--mute);display:grid;place-items:center}
+.dl svg{width:20px;height:20px}
+.dl:hover{color:var(--gold)}
 label,.lbl{display:block;margin:14px 0 6px;color:var(--mute);font-size:14px}
 textarea,input{width:100%;font:inherit;font-size:16px;color:#e8f7ff;background:#0c1a33;border:1.5px solid #436490;border-radius:12px;padding:10px 12px}
 textarea{resize:vertical}
@@ -445,9 +448,58 @@ const dlg = $("dlg");
 dlg.addEventListener("click", e => { if (e.target===dlg) dlg.close(); });
 const show = (...nodes) => { dlg.classList.remove("result"); dlg.replaceChildren(imgBtn(h("button",{class:"x","aria-label":"ปิด",onclick:()=>dlg.close()},"×"),"close","ปิด"),...nodes); if(!dlg.open) dlg.showModal(); };
 
+/* บันทึกผลเป็นรูปภาพ */
+const loadImg = src => new Promise((res, rej) => { const i = new Image(); i.onload = () => res(i); i.onerror = rej; i.src = src; });
+const thSeg = (typeof Intl !== "undefined" && Intl.Segmenter) ? new Intl.Segmenter("th", {granularity:"word"}) : null;
+function wrapText(ctx, text, maxW){
+  const parts = thSeg ? [...thSeg.segment(text)].map(s => s.segment) : [...text];
+  const lines = []; let line = "";
+  for (const p of parts){
+    const t = line + p;
+    if (line && ctx.measureText(t).width > maxW){ lines.push(line.trim()); line = p.trimStart(); } else line = t;
+  }
+  if (line.trim()) lines.push(line.trim());
+  return lines;
+}
+async function saveCard(it){
+  try {
+    const f = it.fortune, FAM = '"Bai Jamjuree","Sarabun",system-ui,sans-serif';
+    await Promise.all([document.fonts.load('600 18px "Bai Jamjuree"', "ก"), document.fonts.load('400 14px "Bai Jamjuree"', "ก")]).catch(()=>{});
+    const [bg, star] = await Promise.all([loadImg("assets/wish-result.png"), USE_IMG ? loadImg(it.s) : null]);
+    const BW = 434, BH = BW * bg.naturalHeight / bg.naturalWidth, S = Math.max(2, bg.naturalWidth / BW);
+    const cv = document.createElement("canvas"); cv.width = Math.round(BW*S); cv.height = Math.round(BH*S);
+    const ctx = cv.getContext("2d"); ctx.scale(S, S);
+    ctx.drawImage(bg, 0, 0, BW, BH);
+    const str = f ? f.t : it.t, by = f ? "" : (it.n ? "จาก " + it.n : "จากดวงดาวนิรนาม");
+    const top = 46, bottom = BH - 28, starS = 76, headH = f ? 24 : 0, byH = by ? 26 : 0;
+    let ts = f ? 14 : 18, lines, lh;
+    for (;;){
+      ctx.font = `400 ${ts}px ${FAM}`; lines = wrapText(ctx, str, BW - 68); lh = ts * 1.5;
+      if (top + starS + 8 + headH + lines.length*lh + byH <= bottom || ts <= 9) break;
+      ts -= .5;
+    }
+    ctx.textAlign = "center"; ctx.textBaseline = "top";
+    if (star){ ctx.save(); ctx.shadowColor = "#e6f7ff"; ctx.shadowBlur = 16; ctx.drawImage(star, (BW-starS)/2, top, starS, starS); ctx.restore(); }
+    let y = top + starS + 8;
+    if (f){ ctx.font = `600 18px ${FAM}`; ctx.fillStyle = "#fff7bd"; ctx.fillText(f.h, BW/2, y); y += headH; }
+    ctx.font = `400 ${ts}px ${FAM}`; ctx.fillStyle = "#e8f7ff";
+    lines.forEach(l => { ctx.fillText(l, BW/2, y); y += lh; });
+    if (by){ y += 6; ctx.font = `400 14px ${FAM}`; ctx.fillStyle = "#aebbdb"; ctx.fillText(by, BW/2, y); }
+    cv.toBlob(b => {
+      const u = URL.createObjectURL(b), a = document.createElement("a");
+      a.href = u; a.download = "msg-" + (f ? "fortune" : "wish") + ".png";
+      document.body.append(a); a.click(); a.remove(); setTimeout(() => URL.revokeObjectURL(u), 4000);
+      toast("บันทึกรูปแล้ว");
+    }, "image/png");
+  } catch (e) { toast("บันทึกรูปไม่สำเร็จ"); }
+}
+const dlBtn = it => { const b = h("button", {class:"dl", type:"button", "aria-label":"บันทึกเป็นรูปภาพ", title:"บันทึกเป็นรูปภาพ", onclick:() => saveCard(it)});
+  b.innerHTML = '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 4v11m0 0l-4.5-4.5M12 15l4.5-4.5M5 19h14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>'; return b; };
+
 function showWish(w){
   show(starEl("big",w.s,w.c), h("p",{class:"wish"},w.t), h("p",{class:"by"}, w.n ? "จาก "+w.n : "จากดวงดาวนิรนาม"));
   dlg.classList.add("result");
+  dlg.append(dlBtn(w));
 }
 
 function openWrite(){
@@ -487,6 +539,7 @@ function showFortune(it){
   body.replaceChildren(starEl("big"+(reduce?"":" spin"),it.s,it.c));
   show(body);
   dlg.classList.add("result");
+  dlg.append(dlBtn(it));
   setTimeout(()=>{
   body.replaceChildren(starEl("big",it.s,it.c), h("p",{class:"fh"},f.h), h("p",{class:"wish",style:"font-size:17px"},f.t));}, reduce?0:1000);
 }
@@ -753,7 +806,7 @@ requestAnimationFrame(()=>requestAnimationFrame(()=>fadeEls.forEach(el=>el.class
     Object.assign(loader.style,{position:"absolute",left:"0",right:"0",margin:"0 auto",bottom:"calc(40px + env(safe-area-inset-bottom))"}); }
 
   /* loading per */
-  const urls = [...new Set([BACKGROUND_IMAGE,SPLASH_BACKGROUND,SPLASH_IMAGE,LOADER_ICON,LOADER_TRACK_IMAGE,LOADER_FILL_IMAGE,...SPLASH_LAYERS.map(l=>l.src),...START_LAYERS.map(l=>l.src),...STAR_IMAGES,...Object.values(BUTTON_IMAGES)].filter(Boolean))];
+  const urls = [...new Set([BACKGROUND_IMAGE,SPLASH_BACKGROUND,SPLASH_IMAGE,LOADER_ICON,LOADER_TRACK_IMAGE,LOADER_FILL_IMAGE,...SPLASH_LAYERS.map(l=>l.src),...START_LAYERS.map(l=>l.src),...STAR_IMAGES,...Object.values(BUTTON_IMAGES),"assets/wish-result.png","assets/wish-form.png"].filter(Boolean))];
   const tasks = [...urls.map(preload), withTimeout(document.fonts ? document.fonts.ready : Promise.resolve(), 10000), dataReady];
   let done = 0; tasks.forEach(p => p.then(()=>{ done++; }));
   const t0 = performance.now(), minMs = reduce ? 500 : Math.max(0, LOADER_MIN_MS);
