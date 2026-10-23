@@ -71,7 +71,7 @@ dialog.result .wish[style]{font-size:14px !important}
 dialog h2{margin:0 0 12px;font-size:22px;color:#e8f7ff;font-weight:600}
 .x{position:absolute;top:18px;right:29px;border:0;background:none;font-size:26px;color:var(--mute);line-height:1}
 label,.lbl{display:block;margin:14px 0 6px;color:var(--mute);font-size:14px}
-textarea,input{width:100%;font:inherit;font-size:16px;color:#171F5C;background:#0c1a33;border:1.5px solid #436490;border-radius:12px;padding:10px 12px}
+textarea,input{width:100%;font:inherit;font-size:16px;color:#e8f7ff;background:#0c1a33;border:1.5px solid #436490;border-radius:12px;padding:10px 12px}
 textarea{resize:vertical}
 textarea::placeholder,input::placeholder{font-size:13px;opacity:.7}
 textarea:focus,input:focus{border-color:#AFA291;background:#0c1a33;outline:none;box-shadow:0 0 6px rgba(255,255,235,.7)}
@@ -314,7 +314,7 @@ const SPLASH_BG_COLOR = "#F7F7F7";
 const SPLASH_VIDEO = "";
 const SPLASH_VIDEO_DIM = 0;
 const SPLASH_LAYERS = [
-  { src:"assets/backgroundelement-title.png", z:0, fit:"cover", fitMobile:"fill", pos:"center", out:true },
+  { src:"assets/backgroundelement-title.png", z:0, fit:"cover", fitMobile:"contain", pos:"center top", out:true },
   { src:"assets/backgroundbox-title.png",     z:0, fit:"cover", fitMobile:"cover", pos:"center", fade:true, dur:1400, delay:200 },
   { src:"assets/Frontdrop-title.png",         z:0, fit:"cover", fitMobile:"cover", pos:"center" }
 ];
