@@ -73,7 +73,14 @@ dialog h2{margin:0 0 12px;font-size:22px;color:#e8f7ff;font-weight:600}
 .dl{position:absolute;bottom:24px;right:31px;width:30px;height:30px;padding:0;border:0;background:none;color:var(--mute);display:grid;place-items:center}
 .dl svg{width:20px;height:20px}
 .dl:hover{color:var(--gold)}
-.dl img{display:block;height:30px;width:auto;pointer-events:none}
+dialog.result{overflow:visible}
+dialog.result .x,
+dialog.result .dl{top:calc(100% + 18px);bottom:auto;width:30px;height:30px;padding:0;display:grid;place-items:center}
+dialog.result .x{right:auto;left:calc(50% + 10px)}
+dialog.result .dl{left:auto;right:calc(50% + 10px)}
+dialog.result .x.imgbtn,
+dialog.result .dl:has(img){width:auto;height:auto}
+.dl img{display:block;height:20px;width:auto;pointer-events:none}
 .dl:has(img){width:auto;height:auto}
 .dl:has(img):hover{filter:brightness(1.15)}
 label,.lbl{display:block;margin:14px 0 6px;color:var(--mute);font-size:14px}
