@@ -491,13 +491,14 @@ async function saveCard(it){
       if (top + starS + 8 + headH + lines.length*lh + byH <= bottom || ts <= 9) break;
       ts -= .5;
     }
-    ctx.textAlign = "center"; ctx.textBaseline = "top";
+    ctx.textAlign = "left"; ctx.textBaseline = "top";
+    const ctr = (t, y) => ctx.fillText(t, (BW - ctx.measureText(t).width) / 2, y);
     if (star){ ctx.save(); ctx.shadowColor = "#e6f7ff"; ctx.shadowBlur = 16; ctx.drawImage(star, (BW-starS)/2, top, starS, starS); ctx.restore(); }
     let y = top + starS + 8;
-    if (f){ ctx.font = `600 18px ${FAM}`; ctx.fillStyle = "#fff7bd"; ctx.fillText(f.h, BW/2, y); y += headH; }
+    if (f){ ctx.font = `600 18px ${FAM}`; ctx.fillStyle = "#fff7bd"; ctr(f.h, y); y += headH; }
     ctx.font = `400 ${ts}px ${FAM}`; ctx.fillStyle = "#e8f7ff";
-    lines.forEach(l => { ctx.fillText(l, BW/2, y); y += lh; });
-    if (by){ y += 6; ctx.font = `400 14px ${FAM}`; ctx.fillStyle = "#aebbdb"; ctx.fillText(by, BW/2, y); }
+    lines.forEach(l => { ctr(l, y); y += lh; });
+    if (by){ y += 6; ctx.font = `400 14px ${FAM}`; ctx.fillStyle = "#aebbdb"; ctr(by, y); }
     cv.toBlob(b => {
       const u = URL.createObjectURL(b), a = document.createElement("a");
       a.href = u; a.download = "msg-" + (f ? "fortune" : "wish") + ".png";
