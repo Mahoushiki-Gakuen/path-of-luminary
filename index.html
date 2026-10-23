@@ -198,8 +198,8 @@ body.pre #musicBox{opacity:0;pointer-events:none}
   #splash > .sbtn.sbtn.sbtn,
   #splash > .btn.btn.btn{
     position:absolute;
-    right:calc(40px + env(safe-area-inset-right));
-    bottom:calc(20px + env(safe-area-inset-bottom));
+    right:calc(60px + env(safe-area-inset-right));
+    bottom:calc(40px + env(safe-area-inset-bottom));
     margin:0;
   }
 }
@@ -213,6 +213,11 @@ body.pre #musicBox{opacity:0;pointer-events:none}
     margin:0;
     text-align:left;
   }
+}
+#splash > img.slogo.slogo.slogo{position:absolute;width:var(--lgw);max-height:25vh;
+  top:calc(var(--lgy,20px) + env(safe-area-inset-top));left:calc(var(--lgx,20px) + env(safe-area-inset-left))}
+@media not all and (min-width:900px) and (hover:hover) and (pointer:fine){
+  #splash > img.slogo.slogo.slogo{left:0;right:0;margin:0 auto;width:var(--lgmw);top:calc(var(--lgmy,20px) + env(safe-area-inset-top))}
 }
 #splash .txt{white-space:pre-line}
 @media (max-width:600px){ #splash .txt{font-size:13px} }
@@ -323,6 +328,9 @@ const SPLASH_ALIGN = "bottom";
 const SPLASH_LOGO_CORNER = true;
 const SPLASH_LOGO_SIZE = 400;
 const SPLASH_LOGO_OFFSET = [0, 0];
+const SPLASH_LOGO_POS = [40, 40];
+const SPLASH_LOGO_MOBILE_TOP = 20;
+const SPLASH_LOGO_MOBILE_SIZE = 300;
 const SPLASH_TEXT_OFFSET = [0, 0];
 const SPLASH_BUTTON_OFFSET = [0, 10];
 const TRANSITION = "fade";
@@ -667,13 +675,12 @@ requestAnimationFrame(()=>requestAnimationFrame(()=>fadeEls.forEach(el=>el.class
  if (SPLASH_IMAGE) {
   const lg = h("img",{src:SPLASH_IMAGE,alt:""});
   if (SPLASH_LOGO_CORNER) {
-    Object.assign(lg.style, {
-      position: "absolute",
-      top: "calc(20px + env(safe-area-inset-top))",
-      left: "calc(20px + env(safe-area-inset-left))",
-      width: `min(40vw, ${SPLASH_LOGO_SIZE}px)`,
-      maxHeight: "25vh"
-    });
+    lg.classList.add("slogo");
+    lg.style.setProperty("--lgx", SPLASH_LOGO_POS[0]+"px");
+    lg.style.setProperty("--lgy", SPLASH_LOGO_POS[1]+"px");
+    lg.style.setProperty("--lgmy", SPLASH_LOGO_MOBILE_TOP+"px");
+    lg.style.setProperty("--lgw", `min(40vw, ${SPLASH_LOGO_SIZE}px)`);
+    lg.style.setProperty("--lgmw", `min(70vw, ${SPLASH_LOGO_MOBILE_SIZE}px)`);
   } else {
     lg.style.width = `min(80vw, ${SPLASH_LOGO_SIZE}px)`; lg.style.maxHeight = "60vh"; lg.style.translate = off(SPLASH_LOGO_OFFSET);
   }
