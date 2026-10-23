@@ -80,7 +80,7 @@ dialog.result .x{right:auto;left:calc(50% + 10px)}
 dialog.result .dl{left:auto;right:calc(50% + 10px)}
 dialog.result .x.imgbtn,
 dialog.result .dl:has(img){width:auto;height:auto}
-.dl img{display:block;height:20px;width:auto;pointer-events:none}
+.dl img{display:block;height:40px;width:auto;pointer-events:none}
 .dl:has(img){width:auto;height:auto}
 .dl:has(img):hover{filter:brightness(1.15)}
 label,.lbl{display:block;margin:14px 0 6px;color:var(--mute);font-size:14px}
@@ -170,7 +170,8 @@ body.pre #musicBox{opacity:0;pointer-events:none}
 @keyframes pop{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:none}}
 .imgbtn img{display:block;height:56px;width:auto;max-width:100%;pointer-events:none}
 #splash .imgbtn img{height:76px;width:auto;max-width:100%;max-height:none;object-fit:contain}
-.x.imgbtn img{height:34px}
+.x.imgbtn img{height:20px}
+.x.imgbtn.again img{height:40px;width:auto}
 .go.imgbtn{width:auto;display:block;margin:18px auto 0}
 .go.imgbtn img{height:60px}
 #splash img{width:min(52vw,220px);height:auto;max-height:30vh;object-fit:contain}
@@ -324,6 +325,7 @@ const START_BUTTON_HEIGHT = 280;
 const START_HOVER_SCALE = 1.3;
 const START_HOVER_MS = 350;
 const BUTTON_IMAGES = { write:"", start:"", submit:"", close:"assets/close-button.png",
+  closeResult:"assets/again-button.png",
   music:"assets/soundON-button.png",
   musicOff:"assets/soundOFF-button.png",
   download:"assets/load-button.png" };
@@ -509,9 +511,16 @@ const dlBtn = it => { const b = h("button", {class:"dl", type:"button", "aria-la
     ? `<img src="${BUTTON_IMAGES.download.replace(/"/g,"%22")}" alt="" draggable="false">`
     : '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 4v11m0 0l-4.5-4.5M12 15l4.5-4.5M5 19h14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>';
   return b; };
+ const resultClose = () => {
+  const x = dlg.querySelector(".x"), src = BUTTON_IMAGES.closeResult;
+  if (!x || !src) return;
+  x.classList.add("imgbtn", "again");
+  x.replaceChildren(h("img", {src, alt:"", draggable:"false"}));
+};
 function showWish(w){
   show(starEl("big",w.s,w.c), h("p",{class:"wish"},w.t), h("p",{class:"by"}, w.n ? "จาก "+w.n : "จากดวงดาวนิรนาม"));
   dlg.classList.add("result");
+  resultClose();
   dlg.append(dlBtn(w));
 }
 
@@ -551,6 +560,7 @@ function showFortune(it){
   const f=it.fortune, body=h("div");
   body.replaceChildren(starEl("big"+(reduce?"":" spin"),it.s,it.c));
   show(body);
+  resultClose();
   dlg.classList.add("result");
   dlg.append(dlBtn(it));
   setTimeout(()=>{
