@@ -571,7 +571,7 @@ const showItem = it => it.fortune ? showFortune(it) : showWish(it);
 
 let pool = [...SEED];
 const active = new Set();
-const maxActive = () => innerWidth<600 ? 9 : 16;
+const maxActive = () => innerWidth<600 ? 14 : 30;
 const updateCount = () => { const c=$("count"); if (c) c.textContent = `ดวงดาวอธิษฐานทั้งหมดตอนนี้ ${pool.length} ดวง`; };
 
 function spawn(w, {mine=false, progress=0}={}){
@@ -703,9 +703,9 @@ const dataReady = withTimeout((async () => {
 })(), 8000);
 
 function startSky(){
-  const n = Math.min(maxActive()-3, 7);
+  const n = Math.min(maxActive()-3, 12);
   for (let i=0;i<n;i++) spawnRandom(.1+Math.random()*.7);
-  setInterval(spawnRandom, 2300);
+  setInterval(spawnRandom, 1800);
   if (DB_BASE) setInterval(async()=>{ const l=(await store.load()).map(clean).filter(w=>w.t); pool=[...SEED,...l]; updateCount(); }, 60000);
 }
 
