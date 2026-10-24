@@ -428,7 +428,7 @@ const lsSet = v => { try { localStorage.setItem("loydao", JSON.stringify(v)); } 
 const store = {
   async load(){
     let remote = [];
-    if (DB_BASE) { try { const r = await fetch(`${DB_BASE}/wishes.json?orderBy="$key"&limitToLast=150`); const o = await r.json();
+    if (DB_BASE) { try { const r = await fetch(`${DB_BASE}/wishes.json?orderBy="$key"&limitToLast=200`); const o = await r.json();
       if (!r.ok || (o && o.error)) throw new Error((o && o.error) || r.status);
       remote = Object.values(o||{}).filter(x=>x && typeof x==="object"); }
       catch (err) { toast("เชื่อมต่อฐานข้อมูลไม่ได้: "+err.message); } }
@@ -571,7 +571,7 @@ const showItem = it => it.fortune ? showFortune(it) : showWish(it);
 
 let pool = [...SEED];
 const active = new Set();
-const maxActive = () => innerWidth<600 ? 14 : 30;
+const maxActive = () => innerWidth<600 ? 25 : 60;
 const updateCount = () => { const c=$("count"); if (c) c.textContent = `ดวงดาวอธิษฐานทั้งหมดตอนนี้ ${pool.length} ดวง`; };
 
 function spawn(w, {mine=false, progress=0}={}){
@@ -579,7 +579,7 @@ function spawn(w, {mine=false, progress=0}={}){
   const el = h("button",{class:"star"+(mine?" mine":""),"aria-label":"เปิดอ่านคำอธิษฐาน"});
   el.style.width=el.style.height=size+"px"; el.style.setProperty("--gc",w.c); el.innerHTML=starSVG(w.s,w.c);
   $("sky").append(el); active.add(w);
-  const W=innerWidth, H=innerHeight, dur=(mine?42000:28000+Math.random()*30000)*(reduce?2:1);
+  const W=innerWidth, H=innerHeight, dur=(mine?90000:70000+Math.random()*40000)*(reduce?2:1);
   const x0=Math.random()*Math.max(1,W-size);
   const offs=[0,.06,.3,.55,.8,.93,1];
   const frames=offs.map((o,i)=>({
@@ -703,9 +703,9 @@ const dataReady = withTimeout((async () => {
 })(), 8000);
 
 function startSky(){
-  const n = Math.min(maxActive()-3, 12);
+  const n = Math.min(maxActive()-3, 40);
   for (let i=0;i<n;i++) spawnRandom(.1+Math.random()*.7);
-  setInterval(spawnRandom, 1800);
+  setInterval(spawnRandom, 1000);
   if (DB_BASE) setInterval(async()=>{ const l=(await store.load()).map(clean).filter(w=>w.t); pool=[...SEED,...l]; updateCount(); }, 60000);
 }
 
